@@ -1,0 +1,218 @@
+{
+  "version": "1.0.0",
+  "title": "Richiesta collaborazione FORMEDIL Lecce - Art. 37 c.12 D.Lgs 81/2008",
+  "meta": {
+    "destinatario": "FORMEDIL LECCE - Via Belgio, 73100 Lecce",
+    "oggetto": "Richiesta collaborazione - Art. 37 comma 12 D.Lgs 81/2008 s.m.i. - Accordo Stato Regioni del 17/04/2025",
+    "privacyUrl": "https://www.formedillecce.it",
+    "maxPartecipanti": 30,
+    "maxDocenti": 4
+  },
+
+  "variants": {
+    "DTL": {
+      "label": "Datore di lavoro",
+      "subtitle": "Il datore di lavoro che forma direttamente i propri dipendenti",
+      "firme": ["Soggetto Formatore (datore di lavoro)"],
+      "allegati": ["Copia documento di identità del datore di lavoro"]
+    },
+    "ENTE": {
+      "label": "Ente di formazione",
+      "subtitle": "Ente di formazione con mandato del datore di lavoro",
+      "firme": ["Soggetto Formatore che eroga il corso", "Impresa"],
+      "allegati": [
+        "Copia documento di identità del rappresentante legale dell'Ente di Formazione",
+        "Copia documento di identità del datore di lavoro dell'impresa richiedente"
+      ]
+    }
+  },
+
+  "options": {
+    "tipiCorso": [
+      { "value": "generale", "label": "Corso di formazione generale" },
+      { "value": "specifica", "label": "Corso di formazione specifica", "extra": "rischio" },
+      { "value": "dirigenti", "label": "Corso di formazione per dirigenti" },
+      { "value": "preposti", "label": "Corso di formazione per preposti" },
+      { "value": "agg_specifica", "label": "Corso di aggiornamento formazione specifica lavoratori" },
+      { "value": "agg_dirigenti", "label": "Corso di aggiornamento formazione per dirigenti" },
+      { "value": "agg_preposti", "label": "Corso di aggiornamento formazione per preposti" }
+    ],
+    "rischio": [
+      { "value": "basso", "label": "Rischio basso" },
+      { "value": "medio", "label": "Rischio medio" },
+      { "value": "alto", "label": "Rischio alto" }
+    ],
+    "modalita": [
+      { "value": "presenza", "label": "Presenza fisica" },
+      { "value": "videoconferenza", "label": "Video conferenza sincrona" },
+      { "value": "elearning", "label": "E-Learning" }
+    ],
+    "strumentiVerifica": [
+      { "value": "test", "label": "Test" },
+      { "value": "colloquio", "label": "Colloquio" }
+    ],
+    "privacy": [
+      { "value": "autorizzo", "label": "Autorizzo FORMEDIL LECCE al trattamento dei dati" },
+      { "value": "non_autorizzo", "label": "NON Autorizzo FORMEDIL LECCE al trattamento dei dati" }
+    ]
+  },
+
+  "steps": [
+    {
+      "id": "richiedente",
+      "title": "Dati del richiedente",
+      "description": "Chi presenta la richiesta",
+      "fields": [
+        { "name": "sottoscritto_nome", "label": "Nome e cognome del sottoscritto", "type": "text", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "sottoscritto_nato_a", "label": "Nato/a a", "type": "text", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "sottoscritto_nato_il", "label": "Nato/a il", "type": "date", "required": true, "variants": ["DTL", "ENTE"] },
+
+        { "name": "azienda_nome", "label": "Datore di lavoro dell'azienda", "type": "text", "required": true, "variants": ["DTL"] },
+        { "name": "azienda_sede_legale", "label": "Sede legale (comune)", "type": "text", "required": true, "variants": ["DTL"] },
+        { "name": "azienda_via", "label": "Via", "type": "text", "required": true, "variants": ["DTL"] },
+        { "name": "azienda_telefono", "label": "Telefono", "type": "tel", "required": true, "variants": ["DTL"] },
+        { "name": "azienda_email", "label": "Email", "type": "email", "required": true, "variants": ["DTL"], "validation": "email" },
+        { "name": "azienda_pec", "label": "PEC", "type": "email", "required": true, "variants": ["DTL"], "validation": "email" },
+        { "name": "azienda_piva", "label": "Partita IVA", "type": "text", "required": true, "variants": ["DTL"], "validation": "piva" },
+        { "name": "azienda_ateco", "label": "Codice ATECO", "type": "text", "required": true, "variants": ["DTL"], "placeholder": "F (Costruzioni)" },
+        { "name": "azienda_cassa_edile_lecce_n", "label": "N° iscrizione Cassa Edile di Lecce", "type": "text", "required": false, "variants": ["DTL"] },
+        { "name": "azienda_edil_cassa_nome", "label": "Edil Cassa di (se diversa)", "type": "text", "required": false, "variants": ["DTL"] },
+        { "name": "azienda_edil_cassa_n", "label": "N° iscrizione Edil Cassa", "type": "text", "required": false, "variants": ["DTL"] },
+
+        { "name": "ente_nome", "label": "Ente di Formazione (di cui è rappresentante legale)", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "ente_sede_legale", "label": "Sede legale (comune)", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "ente_via", "label": "Via", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "ente_telefono", "label": "Telefono", "type": "tel", "required": true, "variants": ["ENTE"] },
+        { "name": "ente_email", "label": "Email", "type": "email", "required": true, "variants": ["ENTE"], "validation": "email" },
+        { "name": "ente_pec", "label": "PEC", "type": "email", "required": true, "variants": ["ENTE"], "validation": "email" },
+        { "name": "mandato_datore", "label": "Datore di lavoro mandante", "type": "text", "required": true, "variants": ["ENTE"], "help": "Il datore di lavoro che ha conferito mandato al Soggetto Formatore" },
+        { "name": "impresa_nome", "label": "Impresa", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "impresa_piva", "label": "Partita IVA impresa", "type": "text", "required": true, "variants": ["ENTE"], "validation": "piva" },
+        { "name": "impresa_cassa_edile_nome", "label": "Cassa Edile di", "type": "text", "required": false, "variants": ["ENTE"] },
+        { "name": "impresa_cassa_edile_n", "label": "N° iscrizione Cassa Edile", "type": "text", "required": false, "variants": ["ENTE"] },
+        { "name": "impresa_edil_cassa_nome", "label": "Edil Cassa di", "type": "text", "required": false, "variants": ["ENTE"] },
+        { "name": "impresa_edil_cassa_n", "label": "N° iscrizione Edil Cassa", "type": "text", "required": false, "variants": ["ENTE"] },
+        { "name": "impresa_ateco", "label": "Codice ATECO", "type": "text", "required": true, "variants": ["ENTE"], "placeholder": "F (Costruzioni)" }
+      ]
+    },
+
+    {
+      "id": "corso",
+      "title": "Il corso",
+      "description": "Tipologia, modalità e durata",
+      "fields": [
+        { "name": "tipi_corso", "label": "Corsi di formazione richiesti", "type": "checkboxGroup", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "tipiCorso", "min": 1 },
+        { "name": "rischio_specifica", "label": "Livello di rischio (formazione specifica)", "type": "select", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "rischio", "condition": { "field": "tipi_corso", "includes": "specifica" } },
+        { "name": "modalita", "label": "Modalità di svolgimento", "type": "select", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "modalita" },
+        { "name": "durata_dal", "label": "Durata complessiva - dal", "type": "date", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "durata_al", "label": "Durata complessiva - al", "type": "date", "required": true, "variants": ["DTL", "ENTE"] }
+      ]
+    },
+
+    {
+      "id": "responsabile",
+      "title": "Responsabile del Progetto Formativo",
+      "description": "Solo per Ente di formazione",
+      "variants": ["ENTE"],
+      "fields": [
+        { "name": "rpf_nome", "label": "Cognome Nome / Ragione sociale", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "rpf_indirizzo", "label": "Indirizzo", "type": "text", "required": true, "variants": ["ENTE"] },
+        { "name": "rpf_telefono", "label": "Telefono", "type": "tel", "required": true, "variants": ["ENTE"] },
+        { "name": "rpf_email", "label": "Email", "type": "email", "required": true, "variants": ["ENTE"], "validation": "email" }
+      ]
+    },
+
+    {
+      "id": "sede",
+      "title": "Sede e calendario",
+      "description": "Dove e quando si svolge il corso",
+      "fields": [
+        { "name": "sede_via", "label": "Via", "type": "text", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "sede_localita", "label": "Località", "type": "text", "required": true, "variants": ["DTL", "ENTE"] },
+        {
+          "name": "giornate",
+          "label": "Giornate del corso",
+          "type": "repeater",
+          "required": true,
+          "variants": ["DTL", "ENTE"],
+          "min": 1,
+          "itemFields": [
+            { "name": "data", "label": "Data", "type": "date", "required": true },
+            { "name": "ora_inizio", "label": "Dalle ore", "type": "time", "required": true },
+            { "name": "ora_fine", "label": "Alle ore", "type": "time", "required": true }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "programma",
+      "title": "Programma e verifiche",
+      "description": "Contenuti e strumenti di valutazione",
+      "fields": [
+        { "name": "programma_esecutivo", "label": "Programma esecutivo del corso", "type": "textarea", "required": true, "variants": ["DTL", "ENTE"], "rows": 8 },
+        { "name": "strumenti_verifica", "label": "Strumenti di verifica intermedi e/o finali", "type": "checkboxGroup", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "strumentiVerifica", "min": 1 }
+      ]
+    },
+
+    {
+      "id": "partecipanti",
+      "title": "Partecipanti",
+      "description": "Massimo 30 partecipanti - tutti lavoratori del settore ATECO F (Costruzioni)",
+      "fields": [
+        {
+          "name": "partecipanti",
+          "label": "Partecipanti al corso",
+          "type": "partecipantiTable",
+          "required": true,
+          "variants": ["DTL", "ENTE"],
+          "min": 1,
+          "max": 30,
+          "pasteEnabled": true,
+          "itemFields": [
+            { "name": "nome_cognome", "label": "Nome e cognome", "type": "text", "required": true },
+            { "name": "codice_fiscale", "label": "Codice Fiscale", "type": "text", "required": true, "validation": "cf" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "docenti",
+      "title": "Docenti",
+      "description": "Massimo 4 docenti in possesso dei requisiti ASR 17/04/2025",
+      "fields": [
+        {
+          "name": "docenti",
+          "label": "Nominativi dei docenti",
+          "type": "docentiTable",
+          "required": true,
+          "variants": ["DTL", "ENTE"],
+          "min": 1,
+          "max": 4,
+          "itemFields": [
+            { "name": "nome", "label": "Nome", "type": "text", "required": true },
+            { "name": "cognome", "label": "Cognome", "type": "text", "required": true },
+            { "name": "data_nascita", "label": "Data di nascita", "type": "date", "required": true }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "dichiarazioni",
+      "title": "Dichiarazioni e privacy",
+      "description": "Presa visione degli impegni e consenso al trattamento dati",
+      "fields": [
+        { "name": "ack_organizzazione", "label": "Dichiaro che il corso sarà organizzato ed erogato secondo l'Accordo Stato Regioni del 17/04/2025 e che docenti e partecipanti possiedono i requisiti previsti.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "ack_lingua", "label": "Dichiaro di aver verificato che eventuali partecipanti di origine straniera comprendono la lingua italiana, o sarà garantito interprete/mediatore culturale.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "ack_mandato", "label": "Dichiaro di aver avuto specifico mandato dal/i datore/i di lavoro delle imprese indicate.", "type": "acknowledgment", "required": true, "variants": ["ENTE"] },
+        { "name": "ack_impegni", "label": "Mi impegno a: trasmettere la richiesta almeno 15 gg prima; rispettare le indicazioni FORMEDIL; comunicare tempestivamente variazioni; trasmettere su richiesta registro presenze e verifiche entro 15 gg.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "ack_verifiche", "label": "Sono a conoscenza che FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione in caso di dichiarazioni non veritiere.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "ack_responsabilita", "label": "Dichiaro, consapevole della responsabilità penale ex artt. 75-76 DPR 445/2000, che quanto dichiarato corrisponde al vero.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"] },
+        { "name": "note", "label": "Eventuali note o comunicazioni", "type": "textarea", "required": false, "variants": ["DTL", "ENTE"], "rows": 4 },
+        { "name": "privacy", "label": "Trattamento dei dati personali", "type": "radio", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "privacy" }
+      ]
+    }
+  ]
+}

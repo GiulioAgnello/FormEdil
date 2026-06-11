@@ -1,0 +1,50 @@
+# ===== Dipendenze =====
+node_modules/
+vendor/
+.pnp
+.pnp.js
+
+# ===== Build / output =====
+frontend/dist/
+frontend/build/
+*.tsbuildinfo
+
+# ===== Ambiente e segreti =====
+.env
+.env.*
+!.env.example
+*.local
+
+# ===== Log =====
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ===== Cache strumenti =====
+.vite/
+.cache/
+.eslintcache
+.npm/
+
+# ===== WordPress (se il repo include un'installazione locale) =====
+wp-config.php
+backend/**/uploads/
+*.sql
+*.sqlite
+
+# ===== File generati a runtime (PDF/allegati lato server) =====
+storage/
+backend/formedil-moduli/generated/
+
+# ===== Editor / IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===== Sistema operativo =====
+.DS_Store
+Thumbs.db
+desktop.ini

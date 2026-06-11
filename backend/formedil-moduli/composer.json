@@ -1,0 +1,16 @@
+{
+  "name": "formedil/moduli",
+  "description": "Backend headless per i moduli di richiesta collaborazione FORMEDIL Lecce (Art. 37).",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Formedil\\Moduli\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}
