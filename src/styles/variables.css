@@ -1,0 +1,64 @@
+/* =====================================================================
+   CUSTOM PROPERTIES CENTRALIZZATE
+   Unica fonte di verità per colori, tipografia e spaziature.
+   - :root            -> brand front-end (lato utente)
+   - .admin-scope     -> palette admin (blue/grey, MAI colori brand)
+   Personalizzare i valori brand con quelli ufficiali FORMEDIL Lecce.
+   ===================================================================== */
+
+:root {
+  /* --- Brand FORMEDIL (TODO: confermare valori ufficiali) --- */
+  --brand-primary: #0b4f8a;          /* blu istituzionale */
+  --brand-primary-dark: #083a66;
+  --brand-primary-light: #e7f0f8;
+  --brand-accent: #f29100;           /* arancio sicurezza/cantiere */
+  --brand-accent-dark: #cf7c00;
+
+  /* --- Tipografia --- */
+  --font-heading: 'Rajdhani', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.75rem;
+  --fs-2xl: 2.25rem;
+
+  /* --- Neutri --- */
+  --color-text: #1a2330;
+  --color-text-muted: #5b6678;
+  --color-bg: #ffffff;
+  --color-surface: #f6f8fb;
+  --color-border: #d8dee8;
+  --color-error: #c0392b;
+  --color-success: #1e8449;
+
+  /* --- Layout --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --shadow-sm: 0 1px 2px rgba(16, 30, 54, 0.08);
+  --shadow-md: 0 6px 20px rgba(16, 30, 54, 0.10);
+  --container-max: 920px;
+}
+
+/* --- Pannello admin: palette professionale blue/grey, niente brand --- */
+.admin-scope {
+  --brand-primary: #2563eb;
+  --brand-primary-dark: #1d4ed8;
+  --brand-primary-light: #e8effd;
+  --brand-accent: #2563eb;
+  --brand-accent-dark: #1d4ed8;
+  --color-bg: #ffffff;
+  --color-surface: #f8fafc;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+}

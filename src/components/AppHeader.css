@@ -1,0 +1,25 @@
+.app-header {
+  background: var(--brand-primary);
+  color: #fff;
+}
+.app-header__inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+}
+.app-header__brand {
+  display: inline-flex;
+  flex-direction: column;
+  color: #fff;
+}
+.app-header__brand:hover { text-decoration: none; }
+.app-header__logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+  letter-spacing: 0.08em;
+}
+.app-header__sub {
+  font-size: var(--fs-xs);
+  opacity: 0.85;
+}
