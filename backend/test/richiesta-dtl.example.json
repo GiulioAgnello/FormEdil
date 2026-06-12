@@ -1,0 +1,44 @@
+{
+  "variante": "DTL",
+  "dati": {
+    "sottoscritto_nome": "Mario Rossi",
+    "sottoscritto_nato_a": "Lecce",
+    "sottoscritto_nato_il": "1980-05-01",
+    "azienda_nome": "Edil Test Srl",
+    "azienda_sede_legale": "Lecce",
+    "azienda_via": "Via Roma 1",
+    "azienda_telefono": "0832000000",
+    "azienda_email": "info@ediltest.it",
+    "azienda_pec": "ediltest@pec.it",
+    "azienda_piva": "00743110157",
+    "azienda_ateco": "F",
+    "azienda_cassa_edile_lecce_n": "12345",
+    "tipi_corso": ["generale", "specifica"],
+    "rischio_specifica": "alto",
+    "modalita": "presenza",
+    "durata_dal": "2026-07-01",
+    "durata_al": "2026-07-02",
+    "sede_via": "Via Cantiere 5",
+    "sede_localita": "Lecce",
+    "giornate": [
+      { "data": "2026-07-01", "ora_inizio": "09:00", "ora_fine": "13:00" },
+      { "data": "2026-07-02", "ora_inizio": "09:00", "ora_fine": "13:00" }
+    ],
+    "programma_esecutivo": "Modulo 1: rischi generali.\nModulo 2: DPI e procedure.",
+    "strumenti_verifica": ["test"],
+    "partecipanti": [
+      { "nome_cognome": "Luca Bianchi", "codice_fiscale": "MRTMTT25D09F205Z" },
+      { "nome_cognome": "Sara Neri", "codice_fiscale": "MRTMTT25D09F205Z" }
+    ],
+    "docenti": [
+      { "nome": "Anna", "cognome": "Verdi", "data_nascita": "1975-03-03" }
+    ],
+    "ack_organizzazione": true,
+    "ack_lingua": true,
+    "ack_impegni": true,
+    "ack_verifiche": true,
+    "ack_responsabilita": true,
+    "note": "Nessuna",
+    "privacy": "autorizzo"
+  }
+}

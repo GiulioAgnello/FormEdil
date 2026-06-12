@@ -9,6 +9,10 @@ frontend/dist/
 frontend/build/
 *.tsbuildinfo
 
+# ===== Pacchetti di consegna (zip plugin con vendor) =====
+*.zip
+backend/formedil-moduli-completo.zip
+
 # ===== Ambiente e segreti =====
 .env
 .env.*

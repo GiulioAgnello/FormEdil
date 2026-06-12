@@ -25,7 +25,17 @@ define('FORMEDIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 // Lo schema canonico è condiviso con il frontend (cartella /shared a livello di repo).
 define('FORMEDIL_SCHEMA_PATH', FORMEDIL_PLUGIN_DIR . 'schema/form-schema.json');
 
+// Autoload Composer (mPDF e dipendenze). Necessario in produzione.
+$composerAutoload = FORMEDIL_PLUGIN_DIR . 'vendor/autoload.php';
+if (is_file($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
+// Autoload PSR-4 delle classi del plugin (funziona anche senza Composer).
 require_once FORMEDIL_PLUGIN_DIR . 'src/autoload.php';
+
+// Creazione tabella e cartelle all'attivazione.
+register_activation_hook(__FILE__, [Core\Activator::class, 'activate']);
 
 /**
  * Bootstrap del plugin.

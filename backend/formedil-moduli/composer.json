@@ -3,7 +3,9 @@
   "description": "Backend headless per i moduli di richiesta collaborazione FORMEDIL Lecce (Art. 37).",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.0",
+    "mpdf/mpdf": "^8.2",
+    "mpdf/qrcode": "^1.2"
   },
   "autoload": {
     "psr-4": {

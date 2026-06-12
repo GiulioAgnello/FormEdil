@@ -55,13 +55,24 @@ bash scripts/sync-schema.sh
 
 Plugin in `backend/formedil-moduli/`. Namespace REST: `/wp-json/formedil/v1/`.
 
-Endpoint S0:
+Endpoint:
 - `GET /health` — stato del servizio
 - `GET /schema?variante=DTL|ENTE` — schema dei campi
+- `POST /richieste` — crea richiesta, genera PDF + token. Body: `{ "variante": "DTL|ENTE", "dati": { ... } }`. Risposta: `{ token, pdf_url, invio_url }`
+- `GET /richieste/{token}` — riepilogo minimo (per la pagina di invio)
+- `GET /richieste/{token}/pdf` — download del PDF generato
 
-Installazione: copiare la cartella `formedil-moduli` in `wp-content/plugins/`
-e attivarla. PHP ≥ 8.0. Autoloading PSR-4 (Composer opzionale, è incluso un
-loader minimale).
+Installazione:
+```bash
+cd backend/formedil-moduli
+composer install      # richiesto: installa mPDF + mpdf/qrcode per la generazione PDF
+```
+Poi copiare/symlinkare la cartella `formedil-moduli` in `wp-content/plugins/` e
+attivarla (l'attivazione crea la tabella `wp_formedil_richieste` e la cartella
+PDF protetta in `uploads/formedil/`). PHP ≥ 8.0.
+
+La base URL del frontend (per i link/QR di invio) è configurabile col filtro
+`formedil_frontend_base_url`.
 
 ## Frontend (React + Vite)
 
@@ -78,8 +89,8 @@ Variabile d'ambiente: `VITE_API_BASE` (default
 ## Roadmap sprint
 
 - **S0** ✅ Schema dati, scaffold backend/frontend, namespace REST, homepage a due porte
-- **S1** Backend richieste: modello dati, `POST /richieste`, generazione PDF server-side, token
-- **S2** Wizard frontend multi-step, validazioni (CF/P.IVA), autosave, incolla partecipanti
+- **S1** ✅ Backend richieste: modello dati, `POST /richieste`, generazione PDF server-side (mPDF + QR), token, validazione schema-driven (CF/P.IVA)
+- **S2** ✅ Wizard frontend multi-step schema-driven, validazioni inline (CF/P.IVA), autosave bozza, incolla partecipanti da Excel, pagina esito (token + download PDF)
 - **S3** Firma & re-upload: pagina token, upload PDF firmato + allegati, notifica FORMEDIL
 - **S4** Pannello admin (elenco, stati, download) — palette blue/grey, JWT
 - **S5** Hardening: validazione file, rate limit, retention GDPR, sicurezza
