@@ -1,5 +1,14 @@
 .nuova__lead { color: var(--color-text-muted); margin-bottom: var(--space-6); }
 .nuova__variant { color: var(--brand-primary); }
+.nuova__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.nuova__bar h1 { margin: 0; }
 
 .nuova__variants {
   display: grid;

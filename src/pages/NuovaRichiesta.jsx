@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import schema from '@shared/form-schema.json';
+import Wizard from '@/components/wizard/Wizard';
+import { api } from '@/api/client';
+import { clearBozza } from '@/utils/storage';
+import '@/components/wizard/wizard.css';
 import './NuovaRichiesta.css';
 
 /**
- * Scelta della variante (DTL / ENTE).
- * Il wizard di compilazione vero e proprio arriva in S2; qui prepariamo
- * la selezione e mostriamo cosa serve per ciascuna variante.
+ * Scelta variante (DTL/ENTE) e compilazione tramite wizard.
  */
 export default function NuovaRichiesta() {
   const { variante } = useParams();
@@ -17,7 +19,6 @@ export default function NuovaRichiesta() {
       <section className="nuova">
         <h1>Nuova richiesta</h1>
         <p className="nuova__lead">Chi presenta la richiesta?</p>
-
         <div className="nuova__variants">
           {Object.entries(schema.variants).map(([key, v]) => (
             <button
@@ -41,7 +42,6 @@ export default function NuovaRichiesta() {
     );
   }
 
-  // Step 2: variante scelta -> placeholder del wizard (S2).
   const v = schema.variants[variante];
   if (!v) {
     return (
@@ -54,32 +54,28 @@ export default function NuovaRichiesta() {
     );
   }
 
-  const steps = schema.steps.filter(
-    (s) => !s.variants || s.variants.includes(variante)
-  );
+  // Invio: crea la richiesta e va alla pagina esito; rilancia gli errori al wizard.
+  const handleSubmit = async (dati) => {
+    try {
+      const res = await api.creaRichiesta(variante, dati);
+      clearBozza(variante);
+      navigate(`/esito/${res.token}`);
+    } catch (err) {
+      throw { errors: err.payload?.errors || null, message: err.message };
+    }
+  };
 
   return (
     <section className="nuova">
-      <h1>
-        Nuova richiesta · <span className="nuova__variant">{v.label}</span>
-      </h1>
-      <p className="nuova__lead">
-        Il modulo si compone di {steps.length} passaggi. Il wizard sarà attivo
-        nello sprint S2.
-      </p>
-
-      <ol className="nuova__steps">
-        {steps.map((s) => (
-          <li key={s.id}>
-            <strong>{s.title}</strong>
-            {s.description ? <span> — {s.description}</span> : null}
-          </li>
-        ))}
-      </ol>
-
-      <button className="btn btn--ghost" onClick={() => navigate('/nuova')}>
-        ← Cambia variante
-      </button>
+      <div className="nuova__bar">
+        <h1>
+          Nuova richiesta · <span className="nuova__variant">{v.label}</span>
+        </h1>
+        <button className="btn btn--ghost btn--sm" onClick={() => navigate('/nuova')}>
+          Cambia variante
+        </button>
+      </div>
+      <Wizard schema={schema} variante={variante} onSubmit={handleSubmit} />
     </section>
   );
 }

@@ -39,8 +39,15 @@ export const api = {
   getSchema: (variante) =>
     request(`/schema${variante ? `?variante=${encodeURIComponent(variante)}` : ''}`),
 
-  // Endpoint previsti nei prossimi sprint (placeholder di interfaccia):
-  // creaRichiesta: (payload) => request('/richieste', { method: 'POST', body: payload }),
-  // getRichiestaByToken: (token) => request(`/richieste/${token}`),
-  // inviaDocumentazione: (token, formData) => ... (multipart, S3),
+  /** Crea una richiesta: { variante, dati } -> { token, pdf_url, invio_url }. */
+  creaRichiesta: (variante, dati) =>
+    request('/richieste', { method: 'POST', body: { variante, dati } }),
+
+  /** Riepilogo minimo per token (pagina di invio / esito). */
+  getRichiestaByToken: (token) => request(`/richieste/${encodeURIComponent(token)}`),
+
+  /** URL diretto per il download del PDF. */
+  pdfUrl: (token) => `${API_BASE}/richieste/${encodeURIComponent(token)}/pdf`,
+
+  // inviaDocumentazione: (token, formData) -> multipart (S3)
 };
