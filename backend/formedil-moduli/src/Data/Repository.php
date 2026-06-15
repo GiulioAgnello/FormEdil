@@ -13,6 +13,7 @@ use Formedil\Moduli\Support\Status;
 final class Repository
 {
     private const TABLE = 'formedil_richieste';
+    private const TABLE_ALLEGATI = 'formedil_allegati';
 
     private static function table(): string
     {
@@ -20,11 +21,18 @@ final class Repository
         return $wpdb->prefix . self::TABLE;
     }
 
-    /** Crea o aggiorna lo schema della tabella (idempotente, via dbDelta). */
+    private static function tableAllegati(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . self::TABLE_ALLEGATI;
+    }
+
+    /** Crea o aggiorna lo schema delle tabelle (idempotente, via dbDelta). */
     public static function createTable(): void
     {
         global $wpdb;
         $table = self::table();
+        $allegati = self::tableAllegati();
         $charset = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE {$table} (
@@ -41,8 +49,23 @@ final class Repository
             KEY stato (stato)
         ) {$charset};";
 
+        // Allegati caricati dall'utente in fase di invio (PDF firmato + extra).
+        $sqlAllegati = "CREATE TABLE {$allegati} (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            richiesta_id BIGINT UNSIGNED NOT NULL,
+            tipo VARCHAR(16) NOT NULL,
+            filename VARCHAR(255) NOT NULL,
+            original_name VARCHAR(255) NOT NULL,
+            mime VARCHAR(100) NOT NULL,
+            size BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY  (id),
+            KEY richiesta_id (richiesta_id)
+        ) {$charset};";
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta($sql);
+        dbDelta($sqlAllegati);
     }
 
     /**
@@ -106,6 +129,25 @@ final class Repository
         return $row;
     }
 
+    /**
+     * Trova una richiesta dall'id.
+     *
+     * @return array<string,mixed>|null
+     */
+    public static function findById(int $id): ?array
+    {
+        global $wpdb;
+        $row = $wpdb->get_row(
+            $wpdb->prepare('SELECT * FROM ' . self::table() . ' WHERE id = %d', $id),
+            ARRAY_A
+        );
+        if (!$row) {
+            return null;
+        }
+        $row['dati'] = json_decode((string) $row['dati'], true) ?: [];
+        return $row;
+    }
+
     public static function updateStato(string $token, string $stato): bool
     {
         global $wpdb;
@@ -117,5 +159,129 @@ final class Repository
             ['%s']
         );
         return $res !== false;
+    }
+
+    /**
+     * Inserisce la riga di un allegato caricato.
+     *
+     * @param array{tipo:string,filename:string,original_name:string,mime:string,size:int} $a
+     * @return int|false ID inserito o false in caso di errore.
+     */
+    public static function insertAllegato(int $richiestaId, array $a)
+    {
+        global $wpdb;
+        $ok = $wpdb->insert(
+            self::tableAllegati(),
+            [
+                'richiesta_id'  => $richiestaId,
+                'tipo'          => $a['tipo'],
+                'filename'      => $a['filename'],
+                'original_name' => $a['original_name'],
+                'mime'          => $a['mime'],
+                'size'          => $a['size'],
+                'created_at'    => gmdate('Y-m-d H:i:s'),
+            ],
+            ['%d', '%s', '%s', '%s', '%s', '%d', '%s']
+        );
+
+        return $ok ? (int) $wpdb->insert_id : false;
+    }
+
+    /**
+     * Allegati di una richiesta.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function listAllegati(int $richiestaId): array
+    {
+        global $wpdb;
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                'SELECT * FROM ' . self::tableAllegati() . ' WHERE richiesta_id = %d ORDER BY id ASC',
+                $richiestaId
+            ),
+            ARRAY_A
+        );
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * Trova un singolo allegato dall'id (per il download admin).
+     *
+     * @return array<string,mixed>|null
+     */
+    public static function findAllegato(int $id): ?array
+    {
+        global $wpdb;
+        $row = $wpdb->get_row(
+            $wpdb->prepare('SELECT * FROM ' . self::tableAllegati() . ' WHERE id = %d', $id),
+            ARRAY_A
+        );
+        return $row ?: null;
+    }
+
+    /**
+     * Costruisce WHERE + parametri condivisi da list() e count().
+     *
+     * @return array{0:string,1:array<int,mixed>}
+     */
+    private static function buildWhere(string $stato, string $search): array
+    {
+        $where = [];
+        $params = [];
+
+        if ($stato !== '') {
+            $where[] = 'stato = %s';
+            $params[] = $stato;
+        }
+        if ($search !== '') {
+            $where[] = 'token LIKE %s';
+            $params[] = '%' . $GLOBALS['wpdb']->esc_like($search) . '%';
+        }
+
+        $sql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
+        return [$sql, $params];
+    }
+
+    /**
+     * Lista paginata per il pannello admin (con filtri).
+     *
+     * @return array<int,array<string,mixed>> Righe con 'dati' decodificato.
+     */
+    public static function list(string $stato = '', string $search = '', int $limit = 20, int $offset = 0): array
+    {
+        global $wpdb;
+        [$whereSql, $params] = self::buildWhere($stato, $search);
+
+        $sql = 'SELECT * FROM ' . self::table() . $whereSql
+            . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $rows = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
+        if (!is_array($rows)) {
+            return [];
+        }
+
+        foreach ($rows as &$row) {
+            $row['dati'] = json_decode((string) $row['dati'], true) ?: [];
+        }
+        unset($row);
+
+        return $rows;
+    }
+
+    /** Conteggio totale per la paginazione. */
+    public static function count(string $stato = '', string $search = ''): int
+    {
+        global $wpdb;
+        [$whereSql, $params] = self::buildWhere($stato, $search);
+
+        $sql = 'SELECT COUNT(*) FROM ' . self::table() . $whereSql;
+        $total = $params === []
+            ? $wpdb->get_var($sql)
+            : $wpdb->get_var($wpdb->prepare($sql, $params));
+
+        return (int) $total;
     }
 }

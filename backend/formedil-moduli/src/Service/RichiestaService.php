@@ -76,6 +76,35 @@ final class RichiestaService
         ];
     }
 
+    /**
+     * Dettaglio completo per il pannello admin: tutti i dati + allegati e
+     * transizioni di stato consentite.
+     *
+     * @param array<string,mixed> $row riga dal Repository (con 'dati' decodificato)
+     * @param array<int,array<string,mixed>> $allegati righe allegati
+     * @return array<string,mixed>
+     */
+    public function dettaglio(array $row, array $allegati): array
+    {
+        $base = $this->riepilogo($row);
+
+        $base['dati'] = is_array($row['dati'] ?? null) ? $row['dati'] : [];
+        $base['updated_at'] = $row['updated_at'] ?? '';
+        $base['transizioni'] = \Formedil\Moduli\Support\Status::transitions()[$row['stato'] ?? ''] ?? [];
+        $base['allegati'] = array_map(static function (array $a): array {
+            return [
+                'id'            => (int) ($a['id'] ?? 0),
+                'tipo'          => $a['tipo'] ?? '',
+                'original_name' => $a['original_name'] ?? '',
+                'mime'          => $a['mime'] ?? '',
+                'size'          => (int) ($a['size'] ?? 0),
+                'created_at'    => $a['created_at'] ?? '',
+            ];
+        }, $allegati);
+
+        return $base;
+    }
+
     private function generaTokenUnico(): string
     {
         for ($i = 0; $i < 5; $i++) {

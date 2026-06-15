@@ -7,6 +7,7 @@ namespace Formedil\Moduli\Rest;
 use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Pdf\PdfGenerator;
 use Formedil\Moduli\Schema\SchemaProvider;
+use Formedil\Moduli\Service\InvioService;
 use Formedil\Moduli\Service\RichiestaService;
 use Formedil\Moduli\Support\Token;
 use WP_REST_Request;
@@ -61,6 +62,13 @@ final class RestController
         register_rest_route(self::NS, '/richieste/(?P<token>[A-Za-z0-9\-]+)/pdf', [
             'methods'             => 'GET',
             'callback'            => [$this, 'downloadPdf'],
+            'permission_callback' => '__return_true',
+        ]);
+
+        // S3: upload del PDF firmato + allegati (multipart/form-data).
+        register_rest_route(self::NS, '/richieste/(?P<token>[A-Za-z0-9\-]+)/invio', [
+            'methods'             => 'POST',
+            'callback'            => [$this, 'inviaDocumentazione'],
             'permission_callback' => '__return_true',
         ]);
     }
@@ -156,6 +164,79 @@ final class RestController
         header('Content-Length: ' . (string) filesize($path));
         readfile($path);
         exit;
+    }
+
+    /**
+     * S3: riceve il PDF firmato (campo "firmato") e gli allegati liberi
+     * (campo "allegati[]") in multipart/form-data, cambia lo stato a FIRMATA_CARICATA.
+     */
+    public function inviaDocumentazione(WP_REST_Request $request): WP_REST_Response
+    {
+        $token = Token::normalize((string) $request->get_param('token'));
+        $files = $request->get_file_params();
+
+        $firmato = isset($files['firmato']) && is_array($files['firmato']) ? $files['firmato'] : [];
+        $allegati = isset($files['allegati']) ? self::normalizeFiles($files['allegati']) : [];
+
+        $service = new InvioService();
+        $result = $service->invia($token, $firmato, $allegati);
+
+        if (!($result['ok'] ?? false)) {
+            $statusMap = [
+                'not_found'         => 404,
+                'conflict'          => 409,
+                'validation_failed' => 422,
+                'storage_error'     => 500,
+            ];
+            $code = (string) ($result['code'] ?? 'error');
+            return new WP_REST_Response([
+                'error'   => $code,
+                'message' => $result['message'] ?? 'Invio non riuscito.',
+                'errors'  => $result['errors'] ?? null,
+                'stato'   => $result['stato'] ?? null,
+            ], $statusMap[$code] ?? 400);
+        }
+
+        return new WP_REST_Response([
+            'ok'       => true,
+            'stato'    => $result['stato'],
+            'allegati' => $result['allegati'],
+            'message'  => 'Documenti ricevuti correttamente.',
+        ], 200);
+    }
+
+    /**
+     * Normalizza il campo file multiplo ($_FILES['allegati']) — che PHP
+     * struttura per chiave e non per indice — in una lista di file singoli.
+     *
+     * @param array<string,mixed> $field
+     * @return array<int,array<string,mixed>>
+     */
+    private static function normalizeFiles(array $field): array
+    {
+        if (!isset($field['name'])) {
+            return [];
+        }
+
+        // Campo singolo (non array): un solo file.
+        if (!is_array($field['name'])) {
+            return ((int) ($field['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) ? [] : [$field];
+        }
+
+        $out = [];
+        foreach (array_keys($field['name']) as $i) {
+            if ((int) ($field['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+            $out[] = [
+                'name'     => $field['name'][$i] ?? '',
+                'type'     => $field['type'][$i] ?? '',
+                'tmp_name' => $field['tmp_name'][$i] ?? '',
+                'error'    => $field['error'][$i] ?? UPLOAD_ERR_NO_FILE,
+                'size'     => $field['size'][$i] ?? 0,
+            ];
+        }
+        return $out;
     }
 
     /** Base URL del frontend SPA (per i link di invio). Configurabile via filtro. */

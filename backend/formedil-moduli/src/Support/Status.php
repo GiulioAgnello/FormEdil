@@ -37,4 +37,30 @@ final class Status
     {
         return in_array($stato, self::all(), true);
     }
+
+    /**
+     * Transizioni di stato consentite all'admin.
+     * FIRMATA_CARICATA -> IN_VERIFICA -> APPROVATA | RESPINTA.
+     * APPROVATA e RESPINTA sono terminali. (GENERATA->FIRMATA_CARICATA la fa l'utente.)
+     *
+     * @return array<string,string[]>
+     */
+    public static function transitions(): array
+    {
+        return [
+            self::GENERATA         => [],
+            self::FIRMATA_CARICATA => [self::IN_VERIFICA],
+            self::IN_VERIFICA      => [self::APPROVATA, self::RESPINTA],
+            self::APPROVATA        => [],
+            self::RESPINTA         => [],
+        ];
+    }
+
+    public static function canTransition(string $from, string $to): bool
+    {
+        if (!self::isValid($from) || !self::isValid($to)) {
+            return false;
+        }
+        return in_array($to, self::transitions()[$from] ?? [], true);
+    }
 }
