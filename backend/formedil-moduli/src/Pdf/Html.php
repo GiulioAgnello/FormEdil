@@ -41,6 +41,31 @@ final class Html
         return $v === '' ? '__:__' : self::esc($v);
     }
 
+    /** Formatta un campo Provincia/Comune/CAP: "73100 Lecce (LE)". */
+    public static function luogo($value, string $empty = '—'): string
+    {
+        if (!is_array($value)) {
+            return $empty;
+        }
+        $comune = trim((string) ($value['comune'] ?? ''));
+        $prov = trim((string) ($value['provincia'] ?? ''));
+        $cap = trim((string) ($value['cap'] ?? ''));
+        if ($comune === '' && $prov === '') {
+            return $empty;
+        }
+        $parts = [];
+        if ($cap !== '') {
+            $parts[] = $cap;
+        }
+        if ($comune !== '') {
+            $parts[] = $comune;
+        }
+        if ($prov !== '') {
+            $parts[] = '(' . $prov . ')';
+        }
+        return self::esc(implode(' ', $parts));
+    }
+
     /** Casella di spunta: piena se $checked. */
     public static function checkbox(bool $checked): string
     {

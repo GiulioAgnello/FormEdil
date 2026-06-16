@@ -58,18 +58,17 @@ final class RichiestaService
     public function riepilogo(array $row): array
     {
         $dati = is_array($row['dati'] ?? null) ? $row['dati'] : [];
-        $isEnte = ($row['variante'] ?? '') === 'ENTE';
 
-        $denominazione = $isEnte
-            ? ($dati['ente_nome'] ?? $dati['impresa_nome'] ?? '')
-            : ($dati['azienda_nome'] ?? '');
+        $denominazione = (string) ($dati['azienda_ragione_sociale'] ?? '');
+        $tipo = $dati['tipo_corso'] ?? '';
+        $tipiCorso = (is_string($tipo) && $tipo !== '') ? [$tipo] : [];
 
         return [
             'token'        => $row['token'] ?? '',
             'variante'     => $row['variante'] ?? '',
             'stato'        => $row['stato'] ?? '',
             'denominazione'=> $denominazione,
-            'tipi_corso'   => is_array($dati['tipi_corso'] ?? null) ? $dati['tipi_corso'] : [],
+            'tipi_corso'   => $tipiCorso,
             'durata_dal'   => $dati['durata_dal'] ?? '',
             'durata_al'    => $dati['durata_al'] ?? '',
             'created_at'   => $row['created_at'] ?? '',

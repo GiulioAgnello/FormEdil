@@ -88,6 +88,10 @@ final class Validator
                 $this->validateCollection($field, is_array($value) ? $value : []);
                 break;
 
+            case 'provinciaComuneCap':
+                $this->validateLuogo($name, is_array($value) ? $value : [], $required);
+                break;
+
             default:
                 $this->validateScalar($field, $value, $required);
                 break;
@@ -113,6 +117,37 @@ final class Validator
         $err = $this->checkFormat($field['validation'] ?? null, $str);
         if ($err !== null) {
             $this->errors[$name] = $err;
+        }
+    }
+
+    /**
+     * Valida un campo Provincia/Comune/CAP.
+     *
+     * @param array<string,mixed> $value
+     */
+    private function validateLuogo(string $name, array $value, bool $required): void
+    {
+        $provincia = trim((string) ($value['provincia'] ?? ''));
+        $comune = trim((string) ($value['comune'] ?? ''));
+        $cap = trim((string) ($value['cap'] ?? ''));
+
+        if ($provincia === '' && $comune === '' && $cap === '') {
+            if ($required) {
+                $this->errors[$name] = 'Campo obbligatorio.';
+            }
+            return;
+        }
+
+        if ($provincia === '' || $comune === '') {
+            $this->errors[$name] = 'Selezionare provincia e comune.';
+            return;
+        }
+        if ($cap !== '' && !preg_match('/^[0-9]{5}$/', $cap)) {
+            $this->errors[$name] = 'CAP non valido.';
+            return;
+        }
+        if ($required && $cap === '') {
+            $this->errors[$name] = 'Indicare il CAP.';
         }
     }
 
