@@ -74,6 +74,10 @@ final class InvioService
 
         Repository::updateStato($token, Status::FIRMATA_CARICATA);
 
+        // Conferma "documenti firmati ricevuti" al richiedente (non bloccante).
+        $dati = is_array($row['dati'] ?? null) ? $row['dati'] : [];
+        Mailer::documentiRicevuti($dati, $token);
+
         return [
             'ok'        => true,
             'stato'     => Status::FIRMATA_CARICATA,

@@ -45,6 +45,9 @@ final class RichiestaService
             return ['ok' => false, 'message' => 'Richiesta salvata ma generazione PDF fallita: ' . $e->getMessage()];
         }
 
+        // Notifica "pratica inserita" con il PDF allegato (non bloccante).
+        Mailer::praticaInserita($dati, $token, $invioUrl, PdfGenerator::path($filename));
+
         return ['ok' => true, 'token' => $token];
     }
 
