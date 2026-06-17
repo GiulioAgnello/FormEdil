@@ -61,3 +61,21 @@ con l'elenco degli errori per campo.
 
 > Nota: per la variante ENTE prepara un payload con i campi `ente_*`,
 > `mandato_datore`, `impresa_*` e `rpf_*` (vedi `shared/form-schema.json`).
+
+## Anteprima grafica del PDF (senza WordPress)
+
+Per ritoccare l'aspetto del PDF velocemente, genera un'anteprima HTML che usa
+lo **stesso template e lo stesso CSS** del PDF reale:
+
+```bash
+cd backend/test
+php render-preview.php          # variante DTL
+php render-preview.php ENTE     # variante ENTE
+```
+
+Apri `preview.html` nel browser. Modifica
+`backend/formedil-moduli/templates/pdf-richiesta.css`, rilancia il comando e
+ricarica la pagina. Il QR è un segnaposto (è una funzione di mPDF), ma
+layout, colori e tipografia sono fedeli al PDF.
+
+Il logo va in `backend/formedil-moduli/templates/assets/logo.jpg` (o `.png`).

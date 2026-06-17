@@ -3,12 +3,16 @@
  * Template HTML del PDF di richiesta collaborazione (DTL / ENTE).
  * Allineato allo schema v2.
  *
+ * Lo stile sta in templates/pdf-richiesta.css (caricato a parte da PdfGenerator).
+ * Qui c'è SOLO struttura e dati.
+ *
  * Variabili attese (iniettate da PdfGenerator):
  * @var string $variante  DTL | ENTE
  * @var array  $dati      dati del modulo
  * @var string $token     token della richiesta
  * @var string $invioUrl  URL per la fase di invio (per il QR)
  * @var array  $schema    schema canonico (per le etichette delle opzioni)
+ * @var string $logoSrc   path/URL del logo per il letterhead ('' se assente)
  *
  * @package Formedil\Moduli
  */
@@ -25,6 +29,7 @@ $giornate = is_array($d('giornate')) ? $d('giornate') : [];
 $partecipanti = is_array($d('partecipanti')) ? $d('partecipanti') : [];
 $docenti = is_array($d('docenti')) ? $d('docenti') : [];
 $privacy = $d('privacy');
+$logoSrc = $logoSrc ?? '';
 
 // Testo iscrizione Casse Edili dal radio + campi condizionati.
 $iscr = (string) $d('iscrizione_cassa');
@@ -46,37 +51,31 @@ $specMap = [
     'altro'          => Html::val($d('spec_altro')),
 ];
 ?>
-<style>
-  body { font-family: sans-serif; font-size: 9.5pt; color: #111; line-height: 1.4; }
-  .dest { text-align: right; font-size: 9pt; margin-bottom: 10pt; }
-  .oggetto { font-weight: bold; margin: 8pt 0; }
-  .sec-title { font-weight: bold; margin: 8pt 0 3pt; }
-  .small { font-size: 8.5pt; }
-  .muted { color: #444; }
-  p { margin: 4pt 0; }
-  table { width: 100%; border-collapse: collapse; }
-  table.grid th, table.grid td { border: 0.5pt solid #888; padding: 2pt 4pt; font-size: 8.5pt; }
-  table.grid th { background: #f0f0f0; text-align: left; }
-  .check { font-size: 11pt; }
-  ul { margin: 3pt 0; padding-left: 14pt; }
-  li { margin: 2pt 0; }
-  .firma-box { border-top: 0.5pt solid #333; padding-top: 3pt; text-align: center; font-size: 8pt; }
-  .token-box { border: 0.7pt solid #333; padding: 6pt; margin-top: 12pt; }
-  .token-code { font-family: monospace; font-size: 12pt; font-weight: bold; letter-spacing: 1pt; }
-</style>
 
-<div class="dest">
-  Spett.le Organismo Paritetico Settore Costruzioni<br>
-  <strong>FORMEDIL LECCE</strong><br>
-  Via Belgio – 73100 Lecce
-</div>
+<table class="letterhead">
+  <tr>
+    <td class="logo">
+      <?php if ($logoSrc !== ''): ?>
+        <img src="<?= Html::esc($logoSrc) ?>" alt="FORMEDIL Lecce">
+      <?php else: ?>
+        <strong style="color:#D35D13; font-size:15pt;">FORMEDIL</strong><br>
+        <span class="small muted">Ente Unico Formazione e Sicurezza · Lecce</span>
+      <?php endif; ?>
+    </td>
+    <td class="dest">
+      Spett.le Organismo Paritetico Settore Costruzioni<br>
+      <strong>FORMEDIL LECCE</strong><br>
+      Via Belgio – 73100 Lecce
+    </td>
+  </tr>
+</table>
 
 <p class="oggetto">
   Oggetto: richiesta collaborazione – Art. 37 comma 12 D.Lgs 81/2008 s.m.i. –
   Accordo Stato Regioni del 17/04/2025
 </p>
 
-<p>
+<p class="intro">
   Il sottoscritto <strong><?= Html::val($d('datore_nome')) ?> <?= Html::val($d('datore_cognome')) ?></strong>,
   in riferimento all'azienda/impresa <strong><?= Html::val($d('azienda_ragione_sociale')) ?></strong>,
   esercente l'attività di <?= Html::val($d('azienda_esercente')) ?>,
@@ -89,23 +88,23 @@ $specMap = [
     <strong><?= Html::val($d('org_ragione_sociale')) ?></strong>
     (indirizzo <?= Html::val($d('org_indirizzo')) ?>, tel. <?= Html::val($d('org_telefono')) ?>,
     email <?= Html::val($d('org_email')) ?>, PEC <?= Html::val($d('org_pec')) ?>),
-    in qualità di SOGGETTO FORMATORE munito di specifico mandato del datore di lavoro,
+    in qualità di SOGGETTO FORMATORE munito di specifico mandato del datore di lavoro
   <?php else: ?>
-    in qualità di SOGGETTO FORMATORE per i propri lavoratori,
+    in qualità di SOGGETTO FORMATORE per i propri lavoratori
   <?php endif; ?>
+  e in coerenza all'art. 37 comma 12 del D.Lgs 81/2008 e s.m.i. e del PUNTO 2 PARTE II
+  Accordo Stato Regioni del 17/04/2025,
 </p>
 
-<p>in coerenza all'art. 37 comma 12 del D.Lgs 81/2008 e s.m.i. e del PUNTO 2 PARTE II
-Accordo Stato Regioni del 17/04/2025,</p>
-
-<p class="oggetto" style="text-align:center;">CHIEDE A FORMEDIL LECCE LA COLLABORAZIONE</p>
+<p class="chiede">CHIEDE A FORMEDIL LECCE LA COLLABORAZIONE</p>
 
 <p>per l'organizzazione e l'erogazione del seguente corso di formazione in materia di
 salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normativo')) ?>):</p>
 
+<div class="section">
 <?php foreach (($opt['tipiCorso'] ?? []) as $tc):
     $checked = ($tc['value'] ?? '') === $tipoSel; ?>
-  <div>
+  <div class="choice">
     <span class="check"><?= Html::checkbox($checked) ?></span>
     <?= Html::esc($tc['label']) ?>
     <?php if ($checked && !empty($specMap[$tc['value']] ?? '')): ?>
@@ -113,6 +112,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
     <?php endif; ?>
   </div>
 <?php endforeach; ?>
+</div>
 
 <p>Il corso si svolgerà in modalità:
   <strong><?= Html::optionLabel($opt['modalita'] ?? [], $d('modalita')) ?></strong>
@@ -123,7 +123,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
   artt. 75 e 76 del DPR 445/2000 in caso di dichiarazione mendace,
 </p>
 
-<p class="oggetto">DICHIARA QUANTO SEGUE:</p>
+<p class="dichiara">DICHIARA QUANTO SEGUE:</p>
 
 <p class="sec-title">1. Organizzazione ed erogazione del corso</p>
 <ul class="small">
@@ -142,23 +142,33 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 
 <?php $n = 2; ?>
 <?php if ($isEnte): $n++; ?>
+  <div class="section">
   <p class="sec-title"><?= $n ?>. Responsabile del Progetto Formativo</p>
   <table class="grid">
-    <tr><th style="width:35%">Cognome Nome / Ragione sociale</th><td><?= Html::val($d('rpf_nome')) ?></td></tr>
-    <tr><th>Indirizzo</th><td><?= Html::val($d('rpf_indirizzo')) ?></td></tr>
-    <tr><th>Telefono</th><td><?= Html::val($d('rpf_telefono')) ?></td></tr>
-    <tr><th>Email</th><td><?= Html::val($d('rpf_email')) ?></td></tr>
+    <tbody>
+      <tr><th>Cognome Nome / Ragione sociale</th><td><?= Html::val($d('rpf_nome')) ?></td></tr>
+      <tr><th>Indirizzo</th><td><?= Html::val($d('rpf_indirizzo')) ?></td></tr>
+      <tr><th>Telefono</th><td><?= Html::val($d('rpf_telefono')) ?></td></tr>
+      <tr><th>Email</th><td><?= Html::val($d('rpf_email')) ?></td></tr>
+    </tbody>
   </table>
+  </div>
 <?php endif; ?>
 
 <?php $n++; ?>
+<div class="section">
 <p class="sec-title"><?= $n ?>. Località dove si svolgerà il corso</p>
 <table class="grid">
-  <tr><th style="width:25%">Sede svolgimento</th><td><?= Html::val($d('sede_indirizzo')) ?></td></tr>
-  <tr><th>Provincia / Comune / CAP</th><td><?= Html::luogo($d('sede_luogo')) ?></td></tr>
+  <tbody>
+    <tr><th>Sede svolgimento</th><td><?= Html::val($d('sede_indirizzo')) ?></td></tr>
+    <tr><th>Provincia / Comune / CAP</th><td><?= Html::luogo($d('sede_luogo')) ?></td></tr>
+  </tbody>
 </table>
 <table class="grid" style="margin-top:4pt;">
-  <tr><th style="width:34%">Data</th><th>Dalle ore</th><th>Alle ore</th></tr>
+  <thead>
+    <tr><th style="width:34%">Data</th><th>Dalle ore</th><th>Alle ore</th></tr>
+  </thead>
+  <tbody>
   <?php if ($giornate): foreach ($giornate as $g): ?>
     <tr>
       <td><?= Html::date($g['data'] ?? '') ?></td>
@@ -168,13 +178,16 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
   <?php endforeach; else: ?>
     <tr><td>—</td><td>—</td><td>—</td></tr>
   <?php endif; ?>
+  </tbody>
 </table>
+</div>
 
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Progetto formativo di dettaglio</p>
-<p style="border:0.5pt solid #888; padding:4pt; min-height:40pt;"><?= nl2br(Html::val($d('progetto_formativo'), '')) ?></p>
+<p class="freebox"><?= nl2br(Html::val($d('progetto_formativo'), '')) ?></p>
 
 <?php $n++; ?>
+<div class="section">
 <p class="sec-title"><?= $n ?>. Strumenti di verifica intermedi e/o finali</p>
 <p>
   <?php foreach (($opt['strumentiVerifica'] ?? []) as $sv): ?>
@@ -182,11 +195,15 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
     <?= Html::esc($sv['label']) ?> &nbsp;&nbsp;
   <?php endforeach; ?>
 </p>
+</div>
 
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Partecipanti al corso (massimo 25)</p>
 <table class="grid">
-  <tr><th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Data di nascita</th></tr>
+  <thead>
+    <tr><th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Data di nascita</th></tr>
+  </thead>
+  <tbody>
   <?php if ($partecipanti): foreach ($partecipanti as $i => $p): ?>
     <tr>
       <td><?= $i + 1 ?></td>
@@ -197,15 +214,19 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
   <?php endforeach; else: ?>
     <tr><td>1</td><td>—</td><td>—</td><td>—</td></tr>
   <?php endif; ?>
+  </tbody>
 </table>
 
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Nominativi dei docenti (massimo 4)</p>
 <table class="grid">
-  <tr>
-    <th style="width:6%">N.</th><th>Nome</th><th>Cognome</th><th>Luogo nascita</th>
-    <th>Data nascita</th><th>Residenza</th><th>Telefono</th><th>Email</th>
-  </tr>
+  <thead>
+    <tr>
+      <th style="width:6%">N.</th><th>Nome</th><th>Cognome</th><th>Luogo nascita</th>
+      <th>Data nascita</th><th>Residenza</th><th>Telefono</th><th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
   <?php if ($docenti): foreach ($docenti as $i => $doc): ?>
     <tr>
       <td><?= $i + 1 ?></td>
@@ -220,11 +241,12 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
   <?php endforeach; else: ?>
     <tr><td>1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
   <?php endif; ?>
+  </tbody>
 </table>
 
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Si impegna, pena la decadenza della collaborazione, a:</p>
-<ul class="small">
+<ul class="small section">
   <li>trasmettere la presente richiesta almeno 15 gg prima dell'erogazione del corso;</li>
   <li>rispettare le eventuali indicazioni e suggerimenti di FORMEDIL LECCE;</li>
   <li>informare tempestivamente FORMEDIL LECCE in caso di variazioni (annullamento, sede, orari, partecipanti);</li>
@@ -233,7 +255,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Dichiara di essere a conoscenza che:</p>
-<ul class="small">
+<ul class="small section">
   <li>FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F);</li>
   <li>FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione
       in caso di divieto/impossibilità di accesso o di dichiarazioni non veritiere.</li>
@@ -256,10 +278,10 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 
 <p>Data: <?= date('d/m/Y') ?></p>
 
-<table style="margin-top:18pt;">
+<table class="firme section">
   <tr>
     <?php foreach (($schema['variants'][$variante]['firme'] ?? []) as $firma): ?>
-      <td style="padding:0 10pt;">
+      <td>
         <div class="firma-box">Timbro e firma<br><?= Html::esc($firma) ?></div>
       </td>
     <?php endforeach; ?>
@@ -270,7 +292,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
   <table>
     <tr>
       <td style="vertical-align:middle;">
-        <strong>Codice di invio documentazione</strong><br>
+        <span class="label">Codice di invio documentazione</span><br>
         <span class="token-code"><?= Html::esc($token) ?></span><br>
         <span class="small muted">
           Conserva questo codice. Dopo aver firmato digitalmente il PDF, vai su

@@ -1,0 +1,164 @@
+/* =====================================================================
+   STILE DEL PDF DI RICHIESTA (DTL / ENTE)
+   Questo file controlla SOLO l'aspetto del PDF generato (mPDF).
+   Il contenuto sta in templates/pdf-richiesta.php.
+
+   COME MODIFICARLO:
+   - Cambia i valori nel blocco "VARIABILI" qui sotto per ritoccare
+     colori, font e spaziature in un colpo solo.
+   - mPDF NON supporta var()/calc(): sono valori normali, raggruppati qui
+     per comodità. Se cambi un colore, aggiornalo dove serve (sono pochi).
+
+   VARIABILI (riferimento rapido)
+     Arancio brand .......... #D35D13   (FORMEDIL)
+     Arancio scuro .......... #A8480E
+     Grigio testo ........... #2D2D2B
+     Grigio tenue ........... #5F5F5D
+     Bordo tabelle .......... #9a9a9a
+     Sfondo intestazioni .... #f3f0ec
+     Font ................... dejavusans (glifi completi, default mPDF)
+     Corpo testo ............ 9.5pt
+   ===================================================================== */
+
+/* ----- Base ----- */
+body {
+  font-family: dejavusans, sans-serif;
+  font-size: 9.5pt;
+  color: #2D2D2B;
+  line-height: 1.45;
+}
+
+p { margin: 4pt 0; }
+
+.small { font-size: 8.5pt; }
+.muted { color: #5F5F5D; }
+strong { color: #1d1d1c; }
+
+/* ----- Intestazione / letterhead ----- */
+.letterhead {
+  width: 100%;
+  border-bottom: 1.4pt solid #D35D13;
+  padding-bottom: 8pt;
+  margin-bottom: 14pt;
+}
+.letterhead td { vertical-align: top; }
+.letterhead .logo { width: 200pt; }
+.letterhead .logo img { width: 185pt; }
+.letterhead .dest {
+  text-align: right;
+  font-size: 9pt;
+  color: #2D2D2B;
+  line-height: 1.5;
+}
+.letterhead .dest strong { color: #2D2D2B; }
+
+/* ----- Oggetto / titoli ----- */
+.oggetto {
+  font-weight: bold;
+  margin: 4pt 0 14pt;
+  line-height: 1.45;
+}
+
+/* ----- Blocco identità ("Il sottoscritto ...") ----- */
+.intro {
+  text-align: justify;
+  line-height: 1.85;
+  margin: 12pt 0;
+}
+.chiede {
+  text-align: center;
+  font-weight: bold;
+  color: #A8480E;
+  letter-spacing: 0.5pt;
+  margin: 10pt 0;
+}
+.dichiara {
+  font-weight: bold;
+  margin: 10pt 0 4pt;
+}
+
+/* ----- Titoli di sezione numerati ----- */
+.sec-title {
+  font-weight: bold;
+  color: #A8480E;
+  border-bottom: 0.5pt solid #e2d7cd;
+  padding-bottom: 1.5pt;
+  margin: 9pt 0 4pt;
+}
+
+/* Raggruppa una sezione per evitare che si spezzi a meta' pagina. */
+.section { page-break-inside: avoid; }
+
+/* ----- Liste dichiarazioni ----- */
+ul { margin: 3pt 0; padding-left: 14pt; }
+li { margin: 2pt 0; }
+
+/* ----- Tabelle dati ----- */
+table { width: 100%; border-collapse: collapse; }
+table.grid th,
+table.grid td {
+  border: 0.5pt solid #9a9a9a;
+  padding: 3pt 5pt;
+  font-size: 8.5pt;
+  vertical-align: top;
+}
+table.grid thead th {
+  background: #f3f0ec;
+  color: #2D2D2B;
+  text-align: left;
+  font-weight: bold;
+}
+/* le righe etichetta-valore (th in prima colonna) */
+table.grid tbody th {
+  background: #faf8f6;
+  text-align: left;
+  font-weight: bold;
+  width: 30%;
+}
+table.grid tbody tr { page-break-inside: avoid; }
+
+/* ----- Caselle di spunta ----- */
+.check { font-size: 11pt; color: #A8480E; }
+.choice { margin: 2pt 0; }
+
+/* ----- Box di testo libero (progetto formativo) ----- */
+.freebox {
+  border: 0.5pt solid #9a9a9a;
+  padding: 5pt;
+  min-height: 40pt;
+}
+
+/* ----- Firme ----- */
+.firme { margin-top: 18pt; }
+.firme td { padding: 0 10pt; }
+.firma-box {
+  border-top: 0.5pt solid #2D2D2B;
+  padding-top: 3pt;
+  text-align: center;
+  font-size: 8pt;
+}
+
+/* ----- Box token / QR ----- */
+.token-box {
+  border: 0.8pt solid #D35D13;
+  background: #fdf6f0;
+  padding: 7pt;
+  margin-top: 12pt;
+  page-break-inside: avoid;
+}
+.token-box .label { font-weight: bold; color: #A8480E; }
+.token-code {
+  font-family: dejavusansmono, monospace;
+  font-size: 12pt;
+  font-weight: bold;
+  letter-spacing: 1pt;
+  color: #2D2D2B;
+}
+
+/* ----- Footer (paginazione) ----- */
+.pdf-footer {
+  font-size: 7.5pt;
+  color: #5F5F5D;
+  border-top: 0.4pt solid #d8d2cb;
+  padding-top: 2pt;
+}
