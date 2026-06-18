@@ -6,6 +6,7 @@ namespace Formedil\Moduli\Service;
 
 use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Pdf\PdfGenerator;
+use Formedil\Moduli\Support\Audit;
 use Formedil\Moduli\Support\Token;
 use Formedil\Moduli\Validation\Validator;
 
@@ -35,6 +36,8 @@ final class RichiestaService
         if ($id === false) {
             return ['ok' => false, 'message' => 'Impossibile salvare la richiesta.'];
         }
+
+        Audit::record((int) $id, $token, Audit::RICHIESTA_CREATA, 'Variante ' . $variante);
 
         $invioUrl = trailingslashit($frontendBaseUrl) . 'invio/' . $token;
 

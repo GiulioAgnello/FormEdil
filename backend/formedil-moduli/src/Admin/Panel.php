@@ -7,6 +7,7 @@ namespace Formedil\Moduli\Admin;
 use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Service\RichiestaService;
 use Formedil\Moduli\Storage\AllegatoStorage;
+use Formedil\Moduli\Support\Audit;
 use Formedil\Moduli\Support\Status;
 use Formedil\Moduli\Support\Token;
 
@@ -220,6 +221,39 @@ final class Panel
             }
         }
 
+        // Cronologia (audit log).
+        $eventi = Repository::listAudit((int) ($row['id'] ?? 0));
+        echo '<h2>' . esc_html__('Cronologia', 'formedil') . '</h2>';
+        if ($eventi === []) {
+            echo '<p class="description">' . esc_html__('Nessun evento registrato.', 'formedil') . '</p>';
+        } else {
+            echo '<table class="wp-list-table widefat fixed striped" style="max-width:760px;">';
+            echo '<thead><tr>';
+            echo '<th style="width:150px;">' . esc_html__('Data', 'formedil') . '</th>';
+            echo '<th>' . esc_html__('Evento', 'formedil') . '</th>';
+            echo '<th style="width:160px;">' . esc_html__('Autore', 'formedil') . '</th>';
+            echo '</tr></thead><tbody>';
+            foreach ($eventi as $e) {
+                $attore = (string) ($e['attore'] ?? '');
+                $autore = $attore !== '' ? $attore : __('Richiedente', 'formedil');
+                $ip = (string) ($e['ip'] ?? '');
+                echo '<tr>';
+                echo '<td>' . esc_html(self::formatDataOra((string) ($e['created_at'] ?? ''))) . '</td>';
+                echo '<td><strong>' . esc_html(self::eventoLabel((string) ($e['evento'] ?? ''))) . '</strong>';
+                if (!empty($e['dettaglio'])) {
+                    echo '<br><span class="description">' . esc_html((string) $e['dettaglio']) . '</span>';
+                }
+                echo '</td>';
+                echo '<td>' . esc_html($autore);
+                if ($ip !== '') {
+                    echo '<br><span class="description">' . esc_html($ip) . '</span>';
+                }
+                echo '</td>';
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
+        }
+
         echo '</div>';
     }
 
@@ -244,7 +278,14 @@ final class Panel
             exit;
         }
 
+        $precedente = (string) ($row['stato'] ?? '');
         Repository::updateStato($token, $nuovo);
+        Audit::record(
+            (int) ($row['id'] ?? 0),
+            $token,
+            Audit::STATO_CAMBIATO,
+            self::statoLabel($precedente) . ' → ' . self::statoLabel($nuovo)
+        );
         wp_safe_redirect(add_query_arg('updated', '1', $detail));
         exit;
     }
@@ -338,6 +379,25 @@ final class Panel
         }
         $ts = strtotime($iso);
         return $ts ? date_i18n('d/m/Y', $ts) : $iso;
+    }
+
+    private static function formatDataOra(string $iso): string
+    {
+        if ($iso === '') {
+            return '—';
+        }
+        $ts = strtotime($iso . ' UTC');
+        return $ts ? date_i18n('d/m/Y H:i', $ts) : $iso;
+    }
+
+    private static function eventoLabel(string $evento): string
+    {
+        $map = [
+            Audit::RICHIESTA_CREATA => 'Richiesta creata',
+            Audit::INVIO_RICEVUTO   => 'Documenti ricevuti',
+            Audit::STATO_CAMBIATO   => 'Stato modificato',
+        ];
+        return $map[$evento] ?? $evento;
     }
 
     private static function formatSize(int $bytes): string

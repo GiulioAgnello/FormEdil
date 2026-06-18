@@ -93,4 +93,34 @@ Variabile d'ambiente: `VITE_API_BASE` (default
 - **S2** ✅ Wizard frontend multi-step schema-driven, validazioni inline (CF/P.IVA), autosave bozza, incolla partecipanti da Excel, pagina esito (token + download PDF)
 - **S3** Firma & re-upload: pagina token, upload PDF firmato + allegati, notifica FORMEDIL
 - **S4** Pannello admin (elenco, stati, download) — palette blue/grey, JWT
-- **S5** Hardening: validazione file, rate limit, retention GDPR, sicurezza
+- **S8** ✅ Hardening: rate limit endpoint pubblici, cap n°/dimensione allegati, audit log (cronologia in admin)
+- _(rinviato)_ Retention GDPR: cancellazione automatica oltre soglia — da definire con la base giuridica di conservazione
+
+## Hardening (S8)
+
+**Rate limiting** sugli endpoint pubblici, per IP, basato su transient WP:
+`POST /richieste` (10 / 10 min), `POST /richieste/{token}/invio` (20 / 10 min),
+`GET /richieste/{token}` (30 / 5 min, anti-enumerazione token). Oltre soglia →
+`429` con header `Retry-After`. Limiti sovrascrivibili:
+
+```php
+add_filter('formedil_rate_limit', function ($conf, $bucket) {
+    if ($bucket === 'crea') { $conf['max'] = 5; }   // 0 = disattiva
+    return $conf;
+}, 10, 2);
+// Dietro reverse proxy, correggere l'IP del client:
+add_filter('formedil_client_ip', fn() => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']);
+```
+
+**Cap allegati** per invio: max `AllegatoStorage::MAX_ALLEGATI` (10) file liberi
+oltre al PDF firmato e max `MAX_TOTAL_SIZE` (40 MB) totali. Validato prima di
+scrivere su disco.
+
+**Audit log** (tabella `wp_formedil_audit`): registra `RICHIESTA_CREATA`,
+`INVIO_RICEVUTO`, `STATO_CAMBIATO` con autore (utente admin o "Richiedente") e
+IP. Visibile nella sezione **Cronologia** del dettaglio richiesta.
+
+> ⚠️ Su installazioni già attive, la nuova tabella `wp_formedil_audit` viene
+> creata riattivando il plugin (disattiva → attiva), via `dbDelta` idempotente.
+
+Test standalone (senza WP/DB): `php backend/test/test-hardening.php`.

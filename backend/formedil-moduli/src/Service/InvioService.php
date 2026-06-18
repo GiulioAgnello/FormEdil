@@ -6,6 +6,7 @@ namespace Formedil\Moduli\Service;
 
 use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Storage\AllegatoStorage;
+use Formedil\Moduli\Support\Audit;
 use Formedil\Moduli\Support\Status;
 
 /**
@@ -43,6 +44,12 @@ final class InvioService
             return ['ok' => false, 'code' => 'validation_failed', 'errors' => ['firmato' => $errFirmato]];
         }
 
+        // Cap d'insieme (numero allegati + dimensione totale) prima del disco.
+        $errCollezione = AllegatoStorage::validateCollection($firmato, $allegati);
+        if ($errCollezione !== '') {
+            return ['ok' => false, 'code' => 'validation_failed', 'errors' => ['allegati' => $errCollezione]];
+        }
+
         // Validazione allegati liberi (se presenti) prima di scrivere su disco.
         $errors = [];
         foreach ($allegati as $i => $file) {
@@ -73,6 +80,7 @@ final class InvioService
         }
 
         Repository::updateStato($token, Status::FIRMATA_CARICATA);
+        Audit::record($richiestaId, $token, Audit::INVIO_RICEVUTO, $count . ' file caricati');
 
         // Conferma "documenti firmati ricevuti" al richiedente (non bloccante).
         $dati = is_array($row['dati'] ?? null) ? $row['dati'] : [];

@@ -14,6 +14,7 @@ final class Repository
 {
     private const TABLE = 'formedil_richieste';
     private const TABLE_ALLEGATI = 'formedil_allegati';
+    private const TABLE_AUDIT = 'formedil_audit';
 
     private static function table(): string
     {
@@ -25,6 +26,12 @@ final class Repository
     {
         global $wpdb;
         return $wpdb->prefix . self::TABLE_ALLEGATI;
+    }
+
+    private static function tableAudit(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . self::TABLE_AUDIT;
     }
 
     /** Crea o aggiorna lo schema delle tabelle (idempotente, via dbDelta). */
@@ -63,9 +70,25 @@ final class Repository
             KEY richiesta_id (richiesta_id)
         ) {$charset};";
 
+        // Registro eventi (audit): transizioni di stato, invii, creazioni.
+        $audit = self::tableAudit();
+        $sqlAudit = "CREATE TABLE {$audit} (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            richiesta_id BIGINT UNSIGNED NULL,
+            token VARCHAR(64) NOT NULL DEFAULT '',
+            evento VARCHAR(48) NOT NULL,
+            dettaglio TEXT NULL,
+            attore VARCHAR(100) NOT NULL DEFAULT '',
+            ip VARCHAR(45) NOT NULL DEFAULT '',
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY  (id),
+            KEY richiesta_id (richiesta_id)
+        ) {$charset};";
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta($sql);
         dbDelta($sqlAllegati);
+        dbDelta($sqlAudit);
     }
 
     /**
@@ -283,5 +306,56 @@ final class Repository
             : $wpdb->get_var($wpdb->prepare($sql, $params));
 
         return (int) $total;
+    }
+
+    // ------------------------------------------------------------------ AUDIT
+
+    /**
+     * Registra una riga di audit.
+     *
+     * @return int|false ID inserito o false in caso di errore.
+     */
+    public static function insertAudit(
+        int $richiestaId,
+        string $token,
+        string $evento,
+        string $dettaglio,
+        string $attore,
+        string $ip
+    ) {
+        global $wpdb;
+        $ok = $wpdb->insert(
+            self::tableAudit(),
+            [
+                'richiesta_id' => $richiestaId > 0 ? $richiestaId : null,
+                'token'        => $token,
+                'evento'       => $evento,
+                'dettaglio'    => $dettaglio,
+                'attore'       => $attore,
+                'ip'           => $ip,
+                'created_at'   => gmdate('Y-m-d H:i:s'),
+            ],
+            ['%d', '%s', '%s', '%s', '%s', '%s', '%s']
+        );
+
+        return $ok ? (int) $wpdb->insert_id : false;
+    }
+
+    /**
+     * Cronologia eventi di una richiesta (più recenti in alto).
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function listAudit(int $richiestaId): array
+    {
+        global $wpdb;
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                'SELECT * FROM ' . self::tableAudit() . ' WHERE richiesta_id = %d ORDER BY id DESC',
+                $richiestaId
+            ),
+            ARRAY_A
+        );
+        return is_array($rows) ? $rows : [];
     }
 }

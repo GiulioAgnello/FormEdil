@@ -9,6 +9,7 @@ use Formedil\Moduli\Pdf\PdfGenerator;
 use Formedil\Moduli\Schema\SchemaProvider;
 use Formedil\Moduli\Service\InvioService;
 use Formedil\Moduli\Service\RichiestaService;
+use Formedil\Moduli\Support\RateLimiter;
 use Formedil\Moduli\Support\Token;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -94,6 +95,11 @@ final class RestController
 
     public function creaRichiesta(WP_REST_Request $request): WP_REST_Response
     {
+        // Anti-abuso: max ~10 creazioni per IP ogni 10 minuti.
+        if ($limited = $this->rateLimit('crea', 10, 600)) {
+            return $limited;
+        }
+
         $body = $request->get_json_params();
         $variante = isset($body['variante']) ? sanitize_text_field((string) $body['variante']) : '';
         $dati = isset($body['dati']) && is_array($body['dati']) ? $body['dati'] : [];
@@ -130,6 +136,11 @@ final class RestController
 
     public function getRichiesta(WP_REST_Request $request): WP_REST_Response
     {
+        // Anti-enumerazione: max ~30 lookup per IP ogni 5 minuti.
+        if ($limited = $this->rateLimit('lookup', 30, 300)) {
+            return $limited;
+        }
+
         $token = Token::normalize((string) $request->get_param('token'));
         $row = Repository::findByToken($token);
 
@@ -172,6 +183,11 @@ final class RestController
      */
     public function inviaDocumentazione(WP_REST_Request $request): WP_REST_Response
     {
+        // Anti-abuso: max ~20 invii per IP ogni 10 minuti.
+        if ($limited = $this->rateLimit('invio', 20, 600)) {
+            return $limited;
+        }
+
         $token = Token::normalize((string) $request->get_param('token'));
         $files = $request->get_file_params();
 
@@ -237,6 +253,25 @@ final class RestController
             ];
         }
         return $out;
+    }
+
+    /**
+     * Applica il rate limit a una rotta pubblica.
+     * Ritorna una risposta 429 (con Retry-After) se il limite è superato,
+     * altrimenti null per proseguire.
+     */
+    private function rateLimit(string $bucket, int $max, int $window): ?WP_REST_Response
+    {
+        $r = RateLimiter::check($bucket, $max, $window);
+        if ($r['ok']) {
+            return null;
+        }
+        $resp = new WP_REST_Response([
+            'error'   => 'rate_limited',
+            'message' => 'Troppe richieste dallo stesso indirizzo. Riprova tra qualche minuto.',
+        ], 429);
+        $resp->header('Retry-After', (string) $r['retry_after']);
+        return $resp;
     }
 
     /** Base URL del frontend SPA (per i link di invio). Configurabile via filtro. */
