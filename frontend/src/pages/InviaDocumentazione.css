@@ -1,0 +1,175 @@
+.invio__lead {
+  color: var(--color-text-muted);
+  max-width: 560px;
+  margin-bottom: var(--space-6);
+}
+.invio__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 460px;
+}
+.invio__label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+.invio__input {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.invio__input:focus {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 1px;
+  border-color: var(--brand-primary);
+}
+.invio__note {
+  margin-top: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+.invio__note code,
+.invio__lead code {
+  background: var(--color-surface);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+.invio__error {
+  color: var(--color-error);
+  margin-bottom: var(--space-4);
+}
+
+/* --- Esito invio --- */
+.invio--ok {
+  text-align: center;
+}
+/* Nel layout centrato il lead ha max-width: senza margini auto resterebbe
+   ancorato a sinistra (testo centrato ma box spostato). Lo centriamo. */
+.invio--ok .invio__lead {
+  margin-left: auto;
+  margin-right: auto;
+}
+.invio__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-4);
+  border-radius: 50%;
+  background: var(--color-success);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 64px;
+}
+
+/* --- Area di upload --- */
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 560px;
+}
+.upload__error {
+  color: var(--color-error);
+  margin: 0;
+}
+
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.upload-field__label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+.upload-field__req {
+  color: var(--color-error);
+  font-style: normal;
+}
+.upload-field__hint {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+.upload-field__error {
+  font-size: var(--fs-sm);
+  color: var(--color-error);
+}
+
+.upload-drop {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-5);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-drop.is-dragging {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+}
+.upload-drop.has-error {
+  border-color: var(--color-error);
+}
+.upload-drop:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+.upload-drop__input {
+  display: none;
+}
+.upload-drop__placeholder {
+  color: var(--color-text-muted);
+}
+.upload-drop__cta {
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.upload-drop__file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.upload-drop__name {
+  font-weight: 600;
+  word-break: break-all;
+}
+.upload-drop__remove,
+.upload-list__remove {
+  background: none;
+  border: none;
+  color: var(--color-error);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  text-decoration: underline;
+}
+
+.upload-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.upload-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+.upload-list__name {
+  word-break: break-all;
+}
+.upload-list__add {
+  align-self: flex-start;
+}

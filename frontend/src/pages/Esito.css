@@ -1,0 +1,39 @@
+.esito { max-width: 560px; margin: 0 auto; text-align: center; }
+.esito__icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--space-3);
+  border-radius: 50%;
+  background: var(--brand-primary-light);
+  color: var(--color-success);
+  font-size: var(--fs-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.esito__lead { color: var(--color-text-muted); }
+.esito__token { display: grid; gap: var(--space-1); margin: var(--space-5) 0; }
+.esito__tokenLabel {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+.esito__tokenCode {
+  font-family: monospace;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--brand-primary);
+}
+.esito__tokenHint { font-size: var(--fs-xs); color: var(--color-text-muted); }
+.esito__recap { font-size: var(--fs-sm); color: var(--color-text-muted); }
+.esito__error { color: var(--color-error); font-size: var(--fs-sm); }
+.esito__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: var(--space-5) 0;
+}
+.esito__home { font-size: var(--fs-sm); }
