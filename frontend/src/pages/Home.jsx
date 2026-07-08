@@ -20,11 +20,10 @@ export default function Home() {
         </p>
       </div>
       <p className="home__intro--highlight">
-        Invia il modulo online, scarica il PDF, firmalo digitalmente e
-        ricaricalo.
+        Invia il modulo online, scarica il PDF, firmalo e ricaricalo.
       </p>
 
-      <h2 className="home__prompt">Chi presenta la richiesta?</h2>
+      <h1 className="home__prompt">Chi presenta la richiesta?</h1>
       <div className="home__variants">
         {Object.entries(schema.variants).map(([key, v]) => (
           <button
@@ -42,13 +41,13 @@ export default function Home() {
       </div>
 
       <div className="home__secondary">
-        <p>Hai già compilato il modulo e lo hai firmato digitalmente?</p>
+        <h2>Hai già compilato il modulo e lo hai firmato ?</h2>
         <button
           type="button"
           className="btn btn--ghost"
           onClick={() => navigate("/invio")}
         >
-          ↑ Invia la documentazione firmata
+          Invia la documentazione firmata
         </button>
       </div>
     </section>
