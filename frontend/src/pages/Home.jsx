@@ -4,7 +4,7 @@ import "./Home.css";
 
 /**
  * Homepage unificata.
- * L'utente si identifica subito sul tipo di richiesta (variante DTL/ENTE)
+ * L'utente si identifica subito sul tipo di richiesta (variante IMPRESA/ENTE)
  * e va dritto al wizard (/nuova/:variante). L'invio della documentazione
  * firmata è un'azione secondaria in fondo.
  */
@@ -26,17 +26,22 @@ export default function Home() {
       <h1 className="home__prompt">Chi presenta la richiesta?</h1>
       <div className="home__variants">
         {Object.entries(schema.variants).map(([key, v]) => (
-          <button
-            key={key}
-            type="button"
-            className="variant-card"
-            onClick={() => navigate(`/nuova/${key}`)}
-          >
-            <span className="variant-card__tag">{key}</span>
+          <div key={key} className="variant-choice">
             <h3>{v.label}</h3>
-            <p>{v.subtitle}</p>
-            <span className="variant-card__cta">Inizia la compilazione →</span>
-          </button>
+            <img
+              className="variant-choice__photo"
+              src={key === "IMPRESA" ? "/impresa.png" : "/ente.png"}
+              alt={v.label}
+            />
+            <p className="variant-choice__subtitle">{v.subtitle}</p>
+            <button
+              type="button"
+              className="variant-choice__btn"
+              onClick={() => navigate(`/nuova/${key}`)}
+            >
+              Inizia la compilazione
+            </button>
+          </div>
         ))}
       </div>
 

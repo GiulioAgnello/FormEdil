@@ -14,6 +14,8 @@
   --brand-accent: #d35d13;
   --brand-accent-dark: #a8480e;
   --brand-graphite: #2d2d2b;         /* grigio scuro sottotitolo logo */
+  --brand-yellow: #ffd500;           /* CTA scelta soggetto (sfondo giallo, testo nero) */
+  --brand-yellow-dark: #e6c000;
 
   /* --- Tipografia --- */
   --font-heading: 'Rajdhani', system-ui, sans-serif;

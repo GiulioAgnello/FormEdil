@@ -42,7 +42,7 @@ final class RestController
                 'variante' => [
                     'type'              => 'string',
                     'required'          => false,
-                    'enum'              => ['DTL', 'ENTE'],
+                    'enum'              => ['IMPRESA', 'ENTE'],
                     'sanitize_callback' => 'sanitize_text_field',
                 ],
             ],
@@ -107,7 +107,7 @@ final class RestController
         if (!SchemaProvider::isValidVariant($variante)) {
             return new WP_REST_Response([
                 'error'   => 'invalid_variant',
-                'message' => 'Variante non valida. Usare DTL o ENTE.',
+                'message' => 'Variante non valida. Usare IMPRESA o ENTE.',
             ], 400);
         }
 

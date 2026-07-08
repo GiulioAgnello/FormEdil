@@ -1,13 +1,13 @@
 <?php
 /**
- * Template HTML del PDF di richiesta collaborazione (DTL / ENTE).
+ * Template HTML del PDF di richiesta collaborazione (IMPRESA / ENTE).
  * Allineato allo schema v2.
  *
  * Lo stile sta in templates/pdf-richiesta.css (caricato a parte da PdfGenerator).
  * Qui c'è SOLO struttura e dati.
  *
  * Variabili attese (iniettate da PdfGenerator):
- * @var string $variante  DTL | ENTE
+ * @var string $variante  IMPRESA | ENTE
  * @var array  $dati      dati del modulo
  * @var string $token     token della richiesta
  * @var string $invioUrl  URL per la fase di invio (per il QR)

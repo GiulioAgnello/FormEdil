@@ -125,7 +125,7 @@ final class Mailer
     }
 
     /**
-     * Destinatario richiedente: sempre azienda_email (presente in DTL ed ENTE).
+     * Destinatario richiedente: sempre azienda_email (presente in IMPRESA ed ENTE).
      *
      * @param array<string,mixed> $dati
      */

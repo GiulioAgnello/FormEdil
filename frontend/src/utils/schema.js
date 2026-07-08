@@ -2,7 +2,7 @@
  * Helper per interrogare lo schema in funzione della variante e dello stato.
  */
 
-/** Step applicabili a una variante (DTL/ENTE). */
+/** Step applicabili a una variante (IMPRESA/ENTE). */
 export function stepsForVariant(schema, variante) {
   return (schema.steps || []).filter(
     (s) => !s.variants || s.variants.includes(variante)

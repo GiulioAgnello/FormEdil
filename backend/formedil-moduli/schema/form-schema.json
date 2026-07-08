@@ -10,15 +10,15 @@
   },
 
   "variants": {
-    "DTL": {
-      "label": "Datore di lavoro",
-      "subtitle": "Il datore di lavoro che forma direttamente i propri dipendenti",
-      "firme": ["Soggetto Formatore (datore di lavoro)"],
+    "IMPRESA": {
+      "label": "Impresa edile",
+      "subtitle": "Compila il modulo per attivare un corso per i tuoi dipendenti",
+      "firme": ["Soggetto Formatore (impresa edile)"],
       "allegati": ["Copia documento di identità del datore di lavoro"]
     },
     "ENTE": {
       "label": "Ente di formazione",
-      "subtitle": "Ente di formazione con mandato del datore di lavoro",
+      "subtitle": "",
       "firme": ["Soggetto Formatore che eroga il corso", "Impresa"],
       "allegati": [
         "Copia documento di identità del rappresentante legale dell'Ente di Formazione",
@@ -70,24 +70,24 @@
       "title": "Dati anagrafici",
       "description": "Datore di lavoro e azienda/impresa richiedente",
       "fields": [
-        { "name": "datore_nome", "label": "Nome", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "col": 6 },
-        { "name": "datore_cognome", "label": "Cognome", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "col": 6 },
+        { "name": "datore_nome", "label": "Nome", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 6 },
+        { "name": "datore_cognome", "label": "Cognome", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 6 },
 
-        { "name": "azienda_ragione_sociale", "label": "Ragione Sociale", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "azienda_piva", "label": "Partita IVA", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "validation": "piva", "col": 6 },
-        { "name": "azienda_esercente", "label": "Esercente l'attività di", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "col": 6 },
-        { "name": "azienda_indirizzo", "label": "Indirizzo sede legale", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "placeholder": "Via e numero civico", "col": 12 },
-        { "name": "azienda_sede", "label": "Provincia / Comune / CAP", "type": "provinciaComuneCap", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "azienda_telefono", "label": "Telefono", "type": "tel", "required": true, "variants": ["DTL", "ENTE"], "col": 4 },
-        { "name": "azienda_email", "label": "E-Mail", "type": "email", "required": true, "variants": ["DTL", "ENTE"], "validation": "email", "col": 4 },
-        { "name": "azienda_pec", "label": "PEC", "type": "email", "required": true, "variants": ["DTL", "ENTE"], "validation": "email", "col": 4 },
-        { "name": "azienda_ateco", "label": "Codice ATECO (Accordo Stato Regioni del 21/12/2011)", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "placeholder": "F (Costruzioni)", "col": 6 },
+        { "name": "azienda_ragione_sociale", "label": "Ragione Sociale", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "azienda_piva", "label": "Partita IVA", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "validation": "piva", "col": 6 },
+        { "name": "azienda_esercente", "label": "Esercente l'attività di", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 6 },
+        { "name": "azienda_indirizzo", "label": "Indirizzo sede legale", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "placeholder": "Via e numero civico", "col": 12 },
+        { "name": "azienda_sede", "label": "Provincia / Comune / CAP", "type": "provinciaComuneCap", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "azienda_telefono", "label": "Telefono", "type": "tel", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 4 },
+        { "name": "azienda_email", "label": "E-Mail", "type": "email", "required": true, "variants": ["IMPRESA", "ENTE"], "validation": "email", "col": 4 },
+        { "name": "azienda_pec", "label": "PEC", "type": "email", "required": true, "variants": ["IMPRESA", "ENTE"], "validation": "email", "col": 4 },
+        { "name": "azienda_ateco", "label": "Codice ATECO (Accordo Stato Regioni del 21/12/2011)", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "placeholder": "F (Costruzioni)", "col": 6 },
 
-        { "name": "iscrizione_cassa", "label": "Iscrizione a Casse Edili", "type": "radio", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "iscrizioneCassa", "col": 12 },
-        { "name": "cassa_edile_provincia", "label": "Cassa Edile di (provincia)", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" }, "col": 6 },
-        { "name": "cassa_edile_numero", "label": "N° iscrizione Cassa Edile", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" }, "col": 6 },
-        { "name": "edil_cassa_provincia", "label": "Edil Cassa di (provincia)", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" }, "col": 6 },
-        { "name": "edil_cassa_numero", "label": "N° iscrizione Edil Cassa", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" }, "col": 6 }
+        { "name": "iscrizione_cassa", "label": "Iscrizione a Casse Edili", "type": "radio", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "iscrizioneCassa", "col": 12 },
+        { "name": "cassa_edile_provincia", "label": "Cassa Edile di (provincia)", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" }, "col": 6 },
+        { "name": "cassa_edile_numero", "label": "N° iscrizione Cassa Edile", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" }, "col": 6 },
+        { "name": "edil_cassa_provincia", "label": "Edil Cassa di (provincia)", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" }, "col": 6 },
+        { "name": "edil_cassa_numero", "label": "N° iscrizione Edil Cassa", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" }, "col": 6 }
       ]
     },
 
@@ -96,19 +96,19 @@
       "title": "Indicazioni corso",
       "description": "Corso di formazione in materia di igiene e sicurezza del lavoro",
       "fields": [
-        { "name": "riferimento_normativo", "label": "Riferimento normativo del corso", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
+        { "name": "riferimento_normativo", "label": "Riferimento normativo del corso", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
 
-        { "name": "tipo_corso", "label": "Tipologia di intervento formativo", "type": "radio", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "tipiCorso", "help": "Per ogni corso è necessario compilare un modulo.", "col": 12 },
-        { "name": "rischio_specifico", "label": "Livello di rischio", "type": "select", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "rischio", "condition": { "field": "tipo_corso", "equals": "specifico" }, "col": 6 },
-        { "name": "spec_figure", "label": "Specificare quale figura di sistema", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "tipo_corso", "equals": "figure_sistema" }, "col": 12 },
-        { "name": "spec_mansione", "label": "Specificare quale mansione", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "tipo_corso", "equals": "mansione" }, "col": 12 },
-        { "name": "spec_addestramento", "label": "Specificare l'addestramento", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "tipo_corso", "equals": "addestramento" }, "col": 12 },
-        { "name": "spec_attrezzature", "label": "Specificare quale attrezzatura", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "tipo_corso", "equals": "attrezzature" }, "col": 12 },
-        { "name": "spec_altro", "label": "Specificare", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "condition": { "field": "tipo_corso", "equals": "altro" }, "col": 12 },
+        { "name": "tipo_corso", "label": "Tipologia di intervento formativo", "type": "radio", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "tipiCorso", "help": "Per ogni corso è necessario compilare un modulo.", "col": 12 },
+        { "name": "rischio_specifico", "label": "Livello di rischio", "type": "select", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "rischio", "condition": { "field": "tipo_corso", "equals": "specifico" }, "col": 6 },
+        { "name": "spec_figure", "label": "Specificare quale figura di sistema", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "tipo_corso", "equals": "figure_sistema" }, "col": 12 },
+        { "name": "spec_mansione", "label": "Specificare quale mansione", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "tipo_corso", "equals": "mansione" }, "col": 12 },
+        { "name": "spec_addestramento", "label": "Specificare l'addestramento", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "tipo_corso", "equals": "addestramento" }, "col": 12 },
+        { "name": "spec_attrezzature", "label": "Specificare quale attrezzatura", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "tipo_corso", "equals": "attrezzature" }, "col": 12 },
+        { "name": "spec_altro", "label": "Specificare", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "condition": { "field": "tipo_corso", "equals": "altro" }, "col": 12 },
 
-        { "name": "modalita", "label": "Modalità di svolgimento", "type": "select", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "modalita", "col": 6 },
-        { "name": "durata_dal", "label": "Durata complessiva - dal", "type": "date", "required": false, "variants": ["DTL", "ENTE"], "col": 6 },
-        { "name": "durata_al", "label": "Durata complessiva - al", "type": "date", "required": false, "variants": ["DTL", "ENTE"], "col": 6 }
+        { "name": "modalita", "label": "Modalità di svolgimento", "type": "select", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "modalita", "col": 6 },
+        { "name": "durata_dal", "label": "Durata complessiva - dal", "type": "date", "required": false, "variants": ["IMPRESA", "ENTE"], "col": 6 },
+        { "name": "durata_al", "label": "Durata complessiva - al", "type": "date", "required": false, "variants": ["IMPRESA", "ENTE"], "col": 6 }
       ]
     },
 
@@ -136,14 +136,14 @@
       "title": "Sede e calendario",
       "description": "Dove e quando si svolge il corso",
       "fields": [
-        { "name": "sede_indirizzo", "label": "Sede svolgimento corso", "type": "text", "required": true, "variants": ["DTL", "ENTE"], "placeholder": "Via e numero civico", "col": 12 },
-        { "name": "sede_luogo", "label": "Provincia / Comune / CAP", "type": "provinciaComuneCap", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
+        { "name": "sede_indirizzo", "label": "Sede svolgimento corso", "type": "text", "required": true, "variants": ["IMPRESA", "ENTE"], "placeholder": "Via e numero civico", "col": 12 },
+        { "name": "sede_luogo", "label": "Provincia / Comune / CAP", "type": "provinciaComuneCap", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
         {
           "name": "giornate",
           "label": "Giorni e orari del corso",
           "type": "repeater",
           "required": true,
-          "variants": ["DTL", "ENTE"],
+          "variants": ["IMPRESA", "ENTE"],
           "min": 1,
           "itemFields": [
             { "name": "data", "label": "Data", "type": "date", "required": true },
@@ -159,8 +159,8 @@
       "title": "Programma e verifiche",
       "description": "Progetto formativo e strumenti di valutazione",
       "fields": [
-        { "name": "progetto_formativo", "label": "Progetto formativo di dettaglio", "type": "textarea", "required": true, "variants": ["DTL", "ENTE"], "help": "Specificare nel dettaglio tutto il percorso formativo.", "rows": 8, "col": 12 },
-        { "name": "strumenti_verifica", "label": "Strumenti di verifica intermedi e/o finali", "type": "checkboxGroup", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "strumentiVerifica", "min": 1, "col": 12 }
+        { "name": "progetto_formativo", "label": "Progetto formativo di dettaglio", "type": "textarea", "required": true, "variants": ["IMPRESA", "ENTE"], "help": "Specificare nel dettaglio tutto il percorso formativo.", "rows": 8, "col": 12 },
+        { "name": "strumenti_verifica", "label": "Strumenti di verifica intermedi e/o finali", "type": "checkboxGroup", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "strumentiVerifica", "min": 1, "col": 12 }
       ]
     },
 
@@ -174,7 +174,7 @@
           "label": "Partecipanti al corso",
           "type": "partecipantiTable",
           "required": true,
-          "variants": ["DTL", "ENTE"],
+          "variants": ["IMPRESA", "ENTE"],
           "min": 1,
           "max": 25,
           "pasteEnabled": true,
@@ -197,7 +197,7 @@
           "label": "Nominativi dei docenti",
           "type": "docentiTable",
           "required": true,
-          "variants": ["DTL", "ENTE"],
+          "variants": ["IMPRESA", "ENTE"],
           "min": 1,
           "max": 4,
           "itemFields": [
@@ -218,14 +218,14 @@
       "title": "Dichiarazioni e privacy",
       "description": "Presa visione degli impegni e consenso al trattamento dati",
       "fields": [
-        { "name": "ack_organizzazione", "label": "Dichiaro che il corso sarà organizzato ed erogato secondo l'Accordo Stato Regioni del 17/04/2025 e che docenti e partecipanti possiedono i requisiti previsti.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "ack_lingua", "label": "Dichiaro di aver verificato che eventuali partecipanti di origine straniera comprendono la lingua italiana, o sarà garantito interprete/mediatore culturale.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
+        { "name": "ack_organizzazione", "label": "Dichiaro che il corso sarà organizzato ed erogato secondo l'Accordo Stato Regioni del 17/04/2025 e che docenti e partecipanti possiedono i requisiti previsti.", "type": "acknowledgment", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "ack_lingua", "label": "Dichiaro di aver verificato che eventuali partecipanti di origine straniera comprendono la lingua italiana, o sarà garantito interprete/mediatore culturale.", "type": "acknowledgment", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
         { "name": "ack_mandato", "label": "Dichiaro di aver avuto specifico mandato dal/i datore/i di lavoro delle imprese indicate.", "type": "acknowledgment", "required": true, "variants": ["ENTE"], "col": 12 },
-        { "name": "ack_impegni", "label": "Mi impegno a: trasmettere la richiesta almeno 15 gg prima; rispettare le indicazioni FORMEDIL; comunicare tempestivamente variazioni; trasmettere su richiesta registro presenze e verifiche entro 15 gg.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "ack_verifiche", "label": "Sono a conoscenza che FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione in caso di dichiarazioni non veritiere.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "ack_responsabilita", "label": "Dichiaro, consapevole della responsabilità penale ex artt. 75-76 DPR 445/2000, che quanto dichiarato corrisponde al vero.", "type": "acknowledgment", "required": true, "variants": ["DTL", "ENTE"], "col": 12 },
-        { "name": "note", "label": "Eventuali note o comunicazioni", "type": "textarea", "required": false, "variants": ["DTL", "ENTE"], "rows": 4, "col": 12 },
-        { "name": "privacy", "label": "Trattamento dei dati personali", "type": "radio", "required": true, "variants": ["DTL", "ENTE"], "optionsRef": "privacy", "col": 12 }
+        { "name": "ack_impegni", "label": "Mi impegno a: trasmettere la richiesta almeno 15 gg prima; rispettare le indicazioni FORMEDIL; comunicare tempestivamente variazioni; trasmettere su richiesta registro presenze e verifiche entro 15 gg.", "type": "acknowledgment", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "ack_verifiche", "label": "Sono a conoscenza che FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione in caso di dichiarazioni non veritiere.", "type": "acknowledgment", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "ack_responsabilita", "label": "Dichiaro, consapevole della responsabilità penale ex artt. 75-76 DPR 445/2000, che quanto dichiarato corrisponde al vero.", "type": "acknowledgment", "required": true, "variants": ["IMPRESA", "ENTE"], "col": 12 },
+        { "name": "note", "label": "Eventuali note o comunicazioni", "type": "textarea", "required": false, "variants": ["IMPRESA", "ENTE"], "rows": 4, "col": 12 },
+        { "name": "privacy", "label": "Trattamento dei dati personali", "type": "radio", "required": true, "variants": ["IMPRESA", "ENTE"], "optionsRef": "privacy", "col": 12 }
       ]
     }
   ]

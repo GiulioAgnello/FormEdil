@@ -8,7 +8,7 @@
  * rigenerare il PDF da WordPress ogni volta.
  *
  * USO (con il PHP di Local, o qualsiasi PHP 8):
- *   php render-preview.php            # variante DTL (default)
+ *   php render-preview.php            # variante IMPRESA (default)
  *   php render-preview.php ENTE       # variante ENTE
  *
  * NB: il QR è una funzione di mPDF (tag <barcode>): nell'anteprima web viene
@@ -17,9 +17,9 @@
 
 declare(strict_types=1);
 
-$variante = strtoupper($argv[1] ?? 'DTL');
-if (!in_array($variante, ['DTL', 'ENTE'], true)) {
-    fwrite(STDERR, "Variante non valida: usa DTL o ENTE\n");
+$variante = strtoupper($argv[1] ?? 'IMPRESA');
+if (!in_array($variante, ['IMPRESA', 'ENTE'], true)) {
+    fwrite(STDERR, "Variante non valida: usa IMPRESA o ENTE\n");
     exit(1);
 }
 
@@ -35,7 +35,7 @@ use Formedil\Moduli\Schema\SchemaProvider;
 // Dati di esempio (riusa il payload di test della variante richiesta).
 $exampleFile = __DIR__ . '/richiesta-' . strtolower($variante) . '.example.json';
 if (!is_file($exampleFile)) {
-    $exampleFile = __DIR__ . '/richiesta-dtl.example.json';
+    $exampleFile = __DIR__ . '/richiesta-impresa.example.json';
 }
 $payload = json_decode((string) file_get_contents($exampleFile), true) ?: [];
 $dati = $payload['dati'] ?? [];

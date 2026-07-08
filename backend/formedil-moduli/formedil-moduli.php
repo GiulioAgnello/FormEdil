@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: FORMEDIL Moduli
- * Description: Backend headless per la digitalizzazione dei moduli di richiesta collaborazione Art. 37 (DTL/ENTE). Espone REST API custom in /wp-json/formedil/v1/.
+ * Description: Backend headless per la digitalizzazione dei moduli di richiesta collaborazione Art. 37 (IMPRESA/ENTE). Espone REST API custom in /wp-json/formedil/v1/.
  * Version: 0.1.0
  * Author: FORMEDIL Lecce
  * Requires PHP: 8.0

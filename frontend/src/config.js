@@ -6,7 +6,7 @@ export const API_BASE =
   import.meta.env.VITE_API_BASE || 'https://moduli.formedillecce.it/wp-json/formedil/v1';
 
 export const VARIANTI = {
-  DTL: 'DTL',
+  IMPRESA: 'IMPRESA',
   ENTE: 'ENTE',
 };
 

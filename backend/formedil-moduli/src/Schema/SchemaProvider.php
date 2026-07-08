@@ -42,7 +42,7 @@ final class SchemaProvider
     }
 
     /**
-     * Verifica che una variante (DTL/ENTE) esista nello schema.
+     * Verifica che una variante (IMPRESA/ENTE) esista nello schema.
      */
     public static function isValidVariant(string $variant): bool
     {
