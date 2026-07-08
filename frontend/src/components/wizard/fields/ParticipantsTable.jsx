@@ -70,7 +70,7 @@ export default function ParticipantsTable({ field, value, error, onChange }) {
         <div className="ptable__bar">
           <span className="ptable__count">{filled} / {max} partecipanti</span>
           <span className="ptable__hint">
-            Suggerimento: copia le righe da Excel (Nome · Cognome · Data di nascita) e incollale qui.
+            Suggerimento: copia le righe da Excel (Nome · Cognome · Codice Fiscale) e incollale qui.
           </span>
           {filled > 0 ? (
             <button type="button" className="btn btn--ghost btn--sm" onClick={clearAll}>

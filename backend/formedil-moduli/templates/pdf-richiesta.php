@@ -127,14 +127,28 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 
 <p class="sec-title">1. Organizzazione ed erogazione del corso</p>
 <ul class="small">
-  <li>Il corso riguarderà lavoratori operanti nel settore ATECO F (Costruzioni);</li>
   <?php if ($isEnte): ?>
-    <li>Il Soggetto Formatore ha avuto specifico mandato dal/i datore/i di lavoro delle imprese indicate;</li>
+    <li>Il corso riguarderà lavoratori del settore ATECO F (Costruzioni);</li>
+    <li>Il Soggetto Formatore ha avuto specifico mandato dal/i datore/i di lavoro della/e impresa/e indicate;</li>
+    <li>Il corso sarà organizzato ed erogato secondo quanto stabilito dall'Accordo Stato Regioni del 17/04/2025;</li>
+    <li>Il Soggetto Formatore ha i requisiti previsti dal Punto 1 della Parte I dell'ASR del 17/04/2025;</li>
+    <li>I docenti sono in possesso dei requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025;</li>
+    <li>Il Responsabile del Progetto Formativo ha i requisiti richiesti dall'ASR del 17/04/2025;</li>
+    <li>È stato verificato dal Soggetto Formatore e/o dal datore di lavoro dell'impresa che gli eventuali
+        partecipanti di origine straniera hanno una comprensione e conoscenza della lingua italiana adeguata
+        e sufficiente a seguire e comprendere le tematiche trattate, o in alternativa sarà assicurata la
+        presenza di un interprete o di un mediatore culturale.</li>
+  <?php else: ?>
+    <li>Il corso riguarderà lavoratori dell'azienda e operanti nel settore di attività ATECO F (Costruzioni);</li>
+    <li>Il corso sarà organizzato ed erogato secondo quanto stabilito dall'Accordo Stato Regioni del 17/04/2025;</li>
+    <li>I docenti sono in possesso dei requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025;</li>
+    <li>È stato verificato che gli eventuali partecipanti di origine straniera hanno una comprensione e
+        conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate,
+        o in alternativa sarà assicurata la presenza di un interprete o di un mediatore culturale;</li>
+    <li>Tutti i partecipanti al corso sono lavoratori dell'azienda in oggetto;</li>
+    <li>Nel caso in cui il datore di lavoro abbia assunto anche la funzione di docente, è in possesso dei
+        requisiti per lo svolgimento diretto dei compiti del servizio di prevenzione e protezione.</li>
   <?php endif; ?>
-  <li>Il corso sarà organizzato ed erogato secondo l'Accordo Stato Regioni del 17/04/2025;</li>
-  <li>I docenti possiedono i requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025;</li>
-  <li>È stato verificato che gli eventuali partecipanti di origine straniera comprendono la lingua
-      italiana, o sarà garantita la presenza di interprete/mediatore culturale.</li>
 </ul>
 
 <p class="sec-title">2. Durata complessiva del corso</p>
@@ -201,7 +215,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 <p class="sec-title"><?= $n ?>. Partecipanti al corso (massimo 25)</p>
 <table class="grid">
   <thead>
-    <tr><th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Data di nascita</th></tr>
+    <tr><th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Codice Fiscale</th></tr>
   </thead>
   <tbody>
   <?php if ($partecipanti): foreach ($partecipanti as $i => $p): ?>
@@ -209,7 +223,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
       <td><?= $i + 1 ?></td>
       <td><?= Html::val($p['nome'] ?? '') ?></td>
       <td><?= Html::val($p['cognome'] ?? '') ?></td>
-      <td><?= Html::date($p['data_nascita'] ?? '') ?></td>
+      <td><?= Html::val($p['codice_fiscale'] ?? '') ?></td>
     </tr>
   <?php endforeach; else: ?>
     <tr><td>1</td><td>—</td><td>—</td><td>—</td></tr>
@@ -222,8 +236,7 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 <table class="grid">
   <thead>
     <tr>
-      <th style="width:6%">N.</th><th>Nome</th><th>Cognome</th><th>Luogo nascita</th>
-      <th>Data nascita</th><th>Residenza</th><th>Telefono</th><th>Email</th>
+      <th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Data di nascita</th>
     </tr>
   </thead>
   <tbody>
@@ -232,14 +245,10 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
       <td><?= $i + 1 ?></td>
       <td><?= Html::val($doc['nome'] ?? '') ?></td>
       <td><?= Html::val($doc['cognome'] ?? '') ?></td>
-      <td><?= Html::val($doc['luogo_nascita'] ?? '') ?></td>
       <td><?= Html::date($doc['data_nascita'] ?? '') ?></td>
-      <td><?= Html::val($doc['residenza'] ?? '') ?></td>
-      <td><?= Html::val($doc['telefono'] ?? '') ?></td>
-      <td><?= Html::val($doc['email'] ?? '') ?></td>
     </tr>
   <?php endforeach; else: ?>
-    <tr><td>1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>1</td><td>—</td><td>—</td><td>—</td></tr>
   <?php endif; ?>
   </tbody>
 </table>
@@ -256,9 +265,14 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Dichiara di essere a conoscenza che:</p>
 <ul class="small section">
-  <li>FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F);</li>
-  <li>FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione
-      in caso di divieto/impossibilità di accesso o di dichiarazioni non veritiere.</li>
+  <?php if (!$isEnte): ?>
+    <li>FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F);</li>
+  <?php endif; ?>
+  <li>Durante i giorni di erogazione del corso, FORMEDIL LECCE si riserva la facoltà di effettuare, senza
+      necessità di preavviso, verifiche &quot;in loco&quot; sul regolare svolgimento delle attività formative.
+      In caso di divieto o impossibilità di accesso, o qualora si accerti che anche una sola delle
+      dichiarazioni rese non corrisponde, parzialmente o interamente, al vero, FORMEDIL LECCE si riserva
+      la facoltà di revocare la collaborazione richiesta.</li>
 </ul>
 
 <p><strong>Eventuali note o comunicazioni:</strong> <?= Html::val($d('note'), '') ?></p>

@@ -7,44 +7,76 @@
     "azienda_piva": "00743110157",
     "azienda_esercente": "Costruzioni edili",
     "azienda_indirizzo": "Via Roma 1",
-    "azienda_sede": { "provincia": "LE", "provincia_nome": "Lecce", "comune": "Lecce", "cap": "73100" },
+    "azienda_sede": {
+      "provincia": "LE",
+      "provincia_nome": "Lecce",
+      "comune": "Lecce",
+      "cap": "73100"
+    },
     "azienda_telefono": "0832000000",
     "azienda_email": "info@ediltest.it",
     "azienda_pec": "ediltest@pec.it",
     "azienda_ateco": "F (Costruzioni)",
     "iscrizione_cassa": "non_iscritta",
-
     "riferimento_normativo": "Art. 37 c.12 D.Lgs 81/2008 - ASR 17/04/2025",
     "tipo_corso": "specifico",
     "rischio_specifico": "alto",
     "modalita": "presenza",
     "durata_dal": "2026-07-01",
     "durata_al": "2026-07-02",
-
     "sede_indirizzo": "Via Cantiere 5",
-    "sede_luogo": { "provincia": "LE", "provincia_nome": "Lecce", "comune": "Lecce", "cap": "73100" },
+    "sede_luogo": {
+      "provincia": "LE",
+      "provincia_nome": "Lecce",
+      "comune": "Lecce",
+      "cap": "73100"
+    },
     "giornate": [
-      { "data": "2026-07-01", "ora_inizio": "09:00", "ora_fine": "13:00" },
-      { "data": "2026-07-02", "ora_inizio": "09:00", "ora_fine": "13:00" }
+      {
+        "data": "2026-07-01",
+        "ora_inizio": "09:00",
+        "ora_fine": "13:00"
+      },
+      {
+        "data": "2026-07-02",
+        "ora_inizio": "09:00",
+        "ora_fine": "13:00"
+      }
     ],
-
     "progetto_formativo": "Modulo 1: rischi generali.\nModulo 2: DPI e procedure.",
-    "strumenti_verifica": ["test"],
-
+    "strumenti_verifica": [
+      "test"
+    ],
     "partecipanti": [
-      { "nome": "Luca", "cognome": "Bianchi", "data_nascita": "1990-03-12" },
-      { "nome": "Sara", "cognome": "Neri", "data_nascita": "1985-11-02" }
+      {
+        "nome": "Luca",
+        "cognome": "Bianchi",
+        "codice_fiscale": "BNCLCU90C12E506O"
+      },
+      {
+        "nome": "Sara",
+        "cognome": "Neri",
+        "codice_fiscale": "NRESRA85S42E506T"
+      }
     ],
     "docenti": [
-      { "nome": "Anna", "cognome": "Verdi", "luogo_nascita": "Lecce", "data_nascita": "1975-03-03", "residenza": "Via Cavour 12, Lecce", "telefono": "3331234567", "email": "anna.verdi@example.it" }
+      {
+        "nome": "Anna",
+        "cognome": "Verdi",
+        "data_nascita": "1975-03-03"
+      }
     ],
-
     "ack_organizzazione": true,
     "ack_lingua": true,
     "ack_impegni": true,
     "ack_verifiche": true,
     "ack_responsabilita": true,
     "note": "Nessuna",
-    "privacy": "autorizzo"
+    "privacy": "autorizzo",
+    "ack_settore": true,
+    "ack_docenti": true,
+    "ack_lavoratori": true,
+    "ack_datore_docente": true,
+    "ack_organismo": true
   }
 }

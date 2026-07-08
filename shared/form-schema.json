@@ -18,7 +18,7 @@
     },
     "ENTE": {
       "label": "Ente di formazione",
-      "subtitle": "",
+      "subtitle": "Richiedi una collaborazione per attivare un corso attraverso il tuo Ente di Formazione",
       "firme": ["Soggetto Formatore che eroga il corso", "Impresa"],
       "allegati": [
         "Copia documento di identità del rappresentante legale dell'Ente di Formazione",
@@ -235,7 +235,7 @@
     {
       "id": "corso",
       "title": "Indicazioni corso",
-      "description": "Corso di formazione in materia di igiene e sicurezza del lavoro",
+      "description": "Corso di formazione in materia di salute e sicurezza del lavoro",
       "fields": [
         {
           "name": "riferimento_normativo",
@@ -485,13 +485,14 @@
       "fields": [
         {
           "name": "progetto_formativo",
-          "label": "Progetto formativo di dettaglio",
+          "label": "Programma esecutivo del corso",
           "type": "textarea",
           "required": true,
           "variants": ["IMPRESA", "ENTE"],
           "help": "Specificare nel dettaglio tutto il percorso formativo.",
           "rows": 8,
-          "col": 12
+          "col": 12,
+          "fontSize": "small"
         },
         {
           "name": "strumenti_verifica",
@@ -509,7 +510,7 @@
     {
       "id": "partecipanti",
       "title": "Partecipanti",
-      "description": "Massimo 25 lavoratori - indicare Nome, Cognome e Data di nascita",
+      "description": "Massimo 25 lavoratori - indicare Nome, Cognome e Codice Fiscale",
       "fields": [
         {
           "name": "partecipanti",
@@ -534,10 +535,11 @@
               "required": true
             },
             {
-              "name": "data_nascita",
-              "label": "Data di nascita",
-              "type": "date",
-              "required": true
+              "name": "codice_fiscale",
+              "label": "Codice Fiscale",
+              "type": "text",
+              "required": true,
+              "validation": "cf"
             }
           ]
         }
@@ -571,35 +573,10 @@
               "required": true
             },
             {
-              "name": "luogo_nascita",
-              "label": "Luogo di nascita",
-              "type": "text",
-              "required": true
-            },
-            {
               "name": "data_nascita",
               "label": "Data di nascita",
               "type": "date",
               "required": true
-            },
-            {
-              "name": "residenza",
-              "label": "Residenza (via e città)",
-              "type": "text",
-              "required": true
-            },
-            {
-              "name": "telefono",
-              "label": "Telefono",
-              "type": "tel",
-              "required": true
-            },
-            {
-              "name": "email",
-              "label": "E-mail",
-              "type": "email",
-              "required": true,
-              "validation": "email"
             }
           ]
         }
@@ -609,51 +586,123 @@
     {
       "id": "dichiarazioni",
       "title": "Dichiarazioni e privacy",
-      "description": "Presa visione degli impegni e consenso al trattamento dati",
+      "description": "Dichiarazioni rese ai sensi degli artt. 46 e 47 del DPR 445/2000 e consenso al trattamento dei dati",
       "fields": [
         {
-          "name": "ack_organizzazione",
-          "label": "Dichiaro che il corso sarà organizzato ed erogato secondo l'Accordo Stato Regioni del 17/04/2025 e che docenti e partecipanti possiedono i requisiti previsti.",
+          "name": "ack_responsabilita",
+          "label": "Consapevole della responsabilità penale e delle sanzioni di cui agli artt. 75 e 76 del DPR 445/2000 in caso di dichiarazione mendace, e del fatto che, qualora emerga la non veridicità del contenuto delle dichiarazioni rese, la presente richiesta di collaborazione si riterrà automaticamente sospesa o revocata, fatto salvo ogni ulteriore profilo di responsabilità civile e penale e l'eventuale azione per il risarcimento dei danni, DICHIARA QUANTO SEGUE.",
           "type": "acknowledgment",
           "required": true,
           "variants": ["IMPRESA", "ENTE"],
           "col": 12
         },
         {
-          "name": "ack_lingua",
-          "label": "Dichiaro di aver verificato che eventuali partecipanti di origine straniera comprendono la lingua italiana, o sarà garantito interprete/mediatore culturale.",
+          "name": "ack_settore",
+          "label": "Il corso riguarderà lavoratori dell'azienda e operanti nel settore di attività ATECO F (Costruzioni).",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": ["IMPRESA"],
           "col": 12
         },
         {
-          "name": "ack_mandato",
-          "label": "Dichiaro di aver avuto specifico mandato dal/i datore/i di lavoro delle imprese indicate.",
+          "name": "ack_settore",
+          "label": "Il corso riguarderà lavoratori del settore ATECO F (Costruzioni).",
           "type": "acknowledgment",
           "required": true,
           "variants": ["ENTE"],
           "col": 12
         },
         {
-          "name": "ack_impegni",
-          "label": "Mi impegno a: trasmettere la richiesta almeno 15 gg prima; rispettare le indicazioni FORMEDIL; comunicare tempestivamente variazioni; trasmettere su richiesta registro presenze e verifiche entro 15 gg.",
+          "name": "ack_mandato",
+          "label": "Il Soggetto Formatore ha avuto specifico mandato dal/i datore/i di lavoro della/e impresa/e indicate.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_organizzazione",
+          "label": "Il corso sarà organizzato ed erogato secondo quanto stabilito dall'Accordo Stato Regioni del 17/04/2025.",
           "type": "acknowledgment",
           "required": true,
           "variants": ["IMPRESA", "ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_formatore",
+          "label": "Il Soggetto Formatore ha i requisiti previsti dal Punto 1 della Parte I dell'ASR del 17/04/2025.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_docenti",
+          "label": "I docenti sono in possesso dei requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA", "ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_rpf",
+          "label": "Il Responsabile del Progetto Formativo ha i requisiti richiesti dall'ASR del 17/04/2025.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_lingua",
+          "label": "È stato verificato che gli eventuali partecipanti di origine straniera hanno una comprensione e conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate nello svolgimento del corso o, in alternativa, sarà assicurata la presenza di un interprete o di un mediatore culturale.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA"],
+          "col": 12
+        },
+        {
+          "name": "ack_lingua",
+          "label": "È stato verificato dal Soggetto Formatore e/o dal datore di lavoro dell'impresa che gli eventuali partecipanti di origine straniera hanno una comprensione e conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate nello svolgimento del corso o, in alternativa, sarà assicurata la presenza di un interprete o di un mediatore culturale.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_lavoratori",
+          "label": "Tutti i partecipanti al corso sono lavoratori dell'azienda in oggetto.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA"],
+          "col": 12
+        },
+        {
+          "name": "ack_datore_docente",
+          "label": "Nel caso in cui il datore di lavoro abbia assunto anche la funzione di docente, è in possesso dei requisiti per lo svolgimento diretto dei compiti del servizio di prevenzione e protezione.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA"],
+          "col": 12
+        },
+        {
+          "name": "ack_impegni",
+          "label": "Si impegna, pena la decadenza della collaborazione in oggetto, a: trasmettere la presente richiesta almeno 15 gg prima dell'erogazione del corso; rispettare le eventuali indicazioni e suggerimenti erogati da FORMEDIL LECCE; informare tempestivamente FORMEDIL LECCE in caso di eventuali variazioni (annullamento del corso e/o variazioni di sede, orari o partecipanti); trasmettere, se richiesto da FORMEDIL LECCE ed entro 15 gg dalla richiesta, copia del registro delle presenze sottoscritto dai Docenti e dal Soggetto Formatore e copia delle risultanze delle verifiche intermedie e/o finali sottoscritte dal Responsabile del Progetto Formativo e dai valutatori.",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA", "ENTE"],
+          "col": 12
+        },
+        {
+          "name": "ack_organismo",
+          "label": "FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F).",
+          "type": "acknowledgment",
+          "required": true,
+          "variants": ["IMPRESA"],
           "col": 12
         },
         {
           "name": "ack_verifiche",
-          "label": "Sono a conoscenza che FORMEDIL LECCE può effettuare verifiche in loco senza preavviso e revocare la collaborazione in caso di dichiarazioni non veritiere.",
-          "type": "acknowledgment",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "col": 12
-        },
-        {
-          "name": "ack_responsabilita",
-          "label": "Dichiaro, consapevole della responsabilità penale ex artt. 75-76 DPR 445/2000, che quanto dichiarato corrisponde al vero.",
+          "label": "Durante i giorni di erogazione del corso, FORMEDIL LECCE si riserva la facoltà di effettuare, senza necessità di preavviso, verifiche 'in loco' sul regolare svolgimento delle attività formative, per il tramite di personale appositamente incaricato. In caso di divieto o impossibilità di accesso, o qualora si accerti che anche una sola delle dichiarazioni rese non corrisponde, parzialmente o interamente, al vero, FORMEDIL LECCE si riserva la facoltà di revocare la collaborazione richiesta.",
           "type": "acknowledgment",
           "required": true,
           "variants": ["IMPRESA", "ENTE"],
@@ -670,7 +719,7 @@
         },
         {
           "name": "privacy",
-          "label": "Trattamento dei dati personali",
+          "label": "Sul sito www.formedillecce.it è presente l'informativa sulla privacy. Trattamento dei dati personali:",
           "type": "radio",
           "required": true,
           "variants": ["IMPRESA", "ENTE"],
