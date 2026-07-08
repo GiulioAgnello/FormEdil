@@ -1,0 +1,4 @@
+
+# Vite temp config files
+vite.config.*.timestamp-*.mjs
+vite.config.js.timestamp-*

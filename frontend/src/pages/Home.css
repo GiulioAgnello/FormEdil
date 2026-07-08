@@ -1,7 +1,7 @@
 .home__intro {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto var(--space-8);
+  margin: 0 auto var(--space-6);
 }
 .home__intro p {
   color: var(--color-text-muted);
@@ -14,13 +14,27 @@
   margin-bottom: 15px;
 }
 
-.home__doors {
+.home__intro--highlight {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 0 var(--space-4) var(--space-6);
+}
+
+.home__prompt {
+  text-align: center;
+  margin: 0 0 var(--space-5);
+  font-size: var(--fs-lg);
+}
+
+.home__variants {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-5);
 }
 
-.door {
+/* Card di identificazione variante (DTL / ENTE) */
+.variant-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -39,40 +53,47 @@
     box-shadow 0.15s ease,
     transform 0.08s ease;
 }
-.door:hover {
+.variant-card:hover {
   border-color: var(--brand-primary);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
-.door h2 {
-  margin: 0;
-}
-.door p {
-  color: var(--color-text-muted);
-  margin: 0;
-}
-
-.door__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  background: var(--brand-primary-light);
-  color: var(--brand-primary);
-  font-size: var(--fs-xl);
+.variant-card__tag {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-family: var(--font-heading);
   font-weight: 700;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  color: var(--brand-accent-dark);
+  background: var(--brand-primary-light);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
 }
-.door__cta {
+.variant-card h3 {
+  margin: 0;
+  padding-right: var(--space-8);
+}
+.variant-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.variant-card__cta {
   margin-top: var(--space-3);
   font-family: var(--font-heading);
   font-weight: 600;
   color: var(--brand-primary);
 }
 
-.home__intro--highlight {
-  justify-content: start;
+/* Azione secondaria: invio documentazione firmata */
+.home__secondary {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
   text-align: center;
-  padding: var(--space-4) var(--space-4);
+}
+.home__secondary p {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
 }

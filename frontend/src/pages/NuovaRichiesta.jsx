@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import schema from "@shared/form-schema.json";
 import Wizard from "@/components/wizard/Wizard";
 import { api } from "@/api/client";
@@ -7,39 +7,16 @@ import "@/components/wizard/wizard.css";
 import "./NuovaRichiesta.css";
 
 /**
- * Scelta variante (DTL/ENTE) e compilazione tramite wizard.
+ * Compilazione della richiesta tramite wizard.
+ * La scelta della variante avviene in Home; qui arriva già /nuova/:variante.
  */
 export default function NuovaRichiesta() {
   const { variante } = useParams();
   const navigate = useNavigate();
 
-  // Step 1: scelta variante.
+  // Senza variante non c'è nulla da compilare: torna alla home.
   if (!variante) {
-    return (
-      <section className="nuova">
-        <h1>Nuova richiesta</h1>
-        <p className="nuova__lead">Chi presenta la richiesta?</p>
-        <div className="nuova__variants">
-          {Object.entries(schema.variants).map(([key, v]) => (
-            <button
-              key={key}
-              type="button"
-              className="variant-card"
-              onClick={() => navigate(`/nuova/${key}`)}
-            >
-              <span className="variant-card__tag">{key}</span>
-              <h2>{v.label}</h2>
-              <p>{v.subtitle}</p>
-              <ul className="variant-card__allegati">
-                {v.allegati.map((a) => (
-                  <li key={a}>{a}</li>
-                ))}
-              </ul>
-            </button>
-          ))}
-        </div>
-      </section>
-    );
+    return <Navigate to="/" replace />;
   }
 
   const v = schema.variants[variante];
@@ -47,8 +24,8 @@ export default function NuovaRichiesta() {
     return (
       <section className="nuova">
         <h1>Variante non valida</h1>
-        <button className="btn btn--ghost" onClick={() => navigate("/nuova")}>
-          ← Torna alla scelta
+        <button className="btn btn--ghost" onClick={() => navigate("/")}>
+          ← Torna alla home
         </button>
       </section>
     );
@@ -73,7 +50,7 @@ export default function NuovaRichiesta() {
         </h1>
         <button
           className="btn btn--ghost btn--sm"
-          onClick={() => navigate("/nuova")}
+          onClick={() => navigate("/")}
         >
           Cambia variante
         </button>

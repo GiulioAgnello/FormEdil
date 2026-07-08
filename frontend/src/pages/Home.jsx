@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import schema from "@shared/form-schema.json";
 import "./Home.css";
 
 /**
- * Homepage a due porte:
- *  1) Nuova richiesta  -> compilazione del modulo (wizard, S2)
- *  2) Invia documentazione -> inserimento token + upload (S3)
+ * Homepage unificata.
+ * L'utente si identifica subito sul tipo di richiesta (variante DTL/ENTE)
+ * e va dritto al wizard (/nuova/:variante). L'invio della documentazione
+ * firmata è un'azione secondaria in fondo.
  */
 export default function Home() {
   const navigate = useNavigate();
@@ -22,33 +24,31 @@ export default function Home() {
         ricaricalo.
       </p>
 
-      <div className="home__doors">
-        <button
-          type="button"
-          className="door"
-          onClick={() => navigate("/nuova")}
-        >
-          <span className="door__icon" aria-hidden="true">
-            ＋
-          </span>
-          <h2>Nuova richiesta</h2>
-          <p>Compila il modulo e genera il PDF da firmare.</p>
-          <span className="door__cta">Inizia la compilazione →</span>
-        </button>
+      <h2 className="home__prompt">Chi presenta la richiesta?</h2>
+      <div className="home__variants">
+        {Object.entries(schema.variants).map(([key, v]) => (
+          <button
+            key={key}
+            type="button"
+            className="variant-card"
+            onClick={() => navigate(`/nuova/${key}`)}
+          >
+            <span className="variant-card__tag">{key}</span>
+            <h3>{v.label}</h3>
+            <p>{v.subtitle}</p>
+            <span className="variant-card__cta">Inizia la compilazione →</span>
+          </button>
+        ))}
+      </div>
 
+      <div className="home__secondary">
+        <p>Hai già compilato il modulo e lo hai firmato digitalmente?</p>
         <button
           type="button"
-          className="door"
+          className="btn btn--ghost"
           onClick={() => navigate("/invio")}
         >
-          <span className="door__icon" aria-hidden="true">
-            ↑
-          </span>
-          <h2>Invia documentazione</h2>
-          <p>
-            Invia il modulo online firmato insernedo il token indicato sul pdf.
-          </p>
-          <span className="door__cta">Inserisci il token →</span>
+          ↑ Invia la documentazione firmata
         </button>
       </div>
     </section>
