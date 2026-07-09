@@ -28,11 +28,21 @@ export default function Home() {
         {Object.entries(schema.variants).map(([key, v]) => (
           <div key={key} className="variant-choice">
             <h3>{v.label}</h3>
-            <img
-              className="variant-choice__photo"
-              src={key === "IMPRESA" ? "/impresa.png" : "/ente.png"}
-              alt={v.label}
-            />
+            <picture className="variant-choice__picture">
+              <source
+                srcSet={key === "IMPRESA" ? "/impresa.webp" : "/ente.webp"}
+                type="image/webp"
+              />
+              <img
+                className="variant-choice__photo"
+                src={key === "IMPRESA" ? "/impresa.jpg" : "/ente.jpg"}
+                alt={v.label}
+                width="800"
+                height="436"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
             <p className="variant-choice__subtitle">{v.subtitle}</p>
             <button
               type="button"
