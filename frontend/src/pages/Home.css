@@ -82,7 +82,7 @@
   display: block;
   width: auto;
   margin: var(--space-5) var(--space-4) var(--space-4);
-  margin-top: auto;
+  margin-top: 15px;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: var(--fs-base);
