@@ -1,14 +1,25 @@
-.nuova__lead { color: var(--color-text-muted); margin-bottom: var(--space-6); }
-.nuova__variant { color: var(--brand-primary); }
+.nuova__lead {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+.nuova__variant {
+  color: var(--brand-primary);
+}
 .nuova__bar {
+  margin-bottom: var(--space-5);
+}
+.nuova__bar h1 {
+  margin: 0;
+}
+.nuova__bar-left {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   flex-wrap: wrap;
-  margin-bottom: var(--space-5);
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
-.nuova__bar h1 { margin: 0; }
 
 .nuova__variants {
   display: grid;
@@ -27,7 +38,10 @@
   cursor: pointer;
   font: inherit;
   color: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.08s ease;
 }
 .variant-card:hover {
   border-color: var(--brand-primary);
@@ -47,8 +61,12 @@
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
 }
-.variant-card h2 { margin-top: var(--space-2); }
-.variant-card p { color: var(--color-text-muted); }
+.variant-card h2 {
+  margin-top: var(--space-2);
+}
+.variant-card p {
+  color: var(--color-text-muted);
+}
 .variant-card__allegati {
   margin: var(--space-3) 0 0;
   padding-left: var(--space-4);
@@ -62,4 +80,46 @@
   display: grid;
   gap: var(--space-2);
 }
-.nuova__steps li { line-height: 1.4; }
+.nuova__steps li {
+  line-height: 1.4;
+}
+
+/* Bottone "Passa a: altra variante" nella barra */
+.nuova__switch strong {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* Dialog di conferma cambio variante */
+.nuova__confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(15, 23, 42, 0.55);
+}
+.nuova__confirm {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+}
+.nuova__confirm-title {
+  margin: 0 0 var(--space-3);
+}
+.nuova__confirm-text {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.nuova__confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
