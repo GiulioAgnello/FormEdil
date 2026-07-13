@@ -1,0 +1,391 @@
+<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><title>Anteprima PDF — IMPRESA</title><style>html,body{background:#e9e9e9;margin:0;}.sheet{background:#fff;width:210mm;min-height:297mm;margin:16px auto;padding:16mm 14mm;box-shadow:0 2px 12px rgba(0,0,0,.2);box-sizing:border-box;}/* =====================================================================
+   STILE DEL PDF DI RICHIESTA (DTL / ENTE)
+   Questo file controlla SOLO l'aspetto del PDF generato (mPDF).
+   Il contenuto sta in templates/pdf-richiesta.php.
+
+   COME MODIFICARLO:
+   - Cambia i valori nel blocco "VARIABILI" qui sotto per ritoccare
+     colori, font e spaziature in un colpo solo.
+   - mPDF NON supporta var()/calc(): sono valori normali, raggruppati qui
+     per comodità. Se cambi un colore, aggiornalo dove serve (sono pochi).
+
+   VARIABILI (riferimento rapido)
+     Arancio brand .......... #D35D13   (FORMEDIL)
+     Arancio scuro .......... #A8480E
+     Grigio testo ........... #2D2D2B
+     Grigio tenue ........... #5F5F5D
+     Bordo tabelle .......... #9a9a9a
+     Sfondo intestazioni .... #f3f0ec
+     Font ................... dejavusans (glifi completi, default mPDF)
+     Corpo testo ............ 9.5pt
+   ===================================================================== */
+
+/* ----- Base ----- */
+body {
+  font-family: dejavusans, sans-serif;
+  font-size: 9.5pt;
+  color: #2D2D2B;
+  line-height: 1.45;
+}
+
+p { margin: 4pt 0; }
+
+.small { font-size: 8.5pt; }
+.muted { color: #5F5F5D; }
+strong { color: #1d1d1c; }
+
+/* ----- Intestazione / letterhead ----- */
+.letterhead {
+  width: 100%;
+  border-bottom: 1.4pt solid #D35D13;
+  padding-bottom: 8pt;
+  margin-bottom: 14pt;
+}
+.letterhead td { vertical-align: top; }
+.letterhead .logo { width: 200pt; }
+.letterhead .logo img { width: 185pt; }
+.letterhead .dest {
+  text-align: right;
+  font-size: 9pt;
+  color: #2D2D2B;
+  line-height: 1.5;
+}
+.letterhead .dest strong { color: #2D2D2B; }
+
+/* ----- Oggetto / titoli ----- */
+.oggetto {
+  font-weight: bold;
+  margin: 4pt 0 14pt;
+  line-height: 1.45;
+}
+
+/* ----- Blocco identità ("Il sottoscritto ...") ----- */
+.intro {
+  text-align: justify;
+  line-height: 1.85;
+  margin: 12pt 0;
+}
+.chiede {
+  text-align: center;
+  font-weight: bold;
+  color: #A8480E;
+  letter-spacing: 0.5pt;
+  margin: 10pt 0;
+}
+.dichiara {
+  font-weight: bold;
+  margin: 10pt 0 4pt;
+}
+
+/* ----- Titoli di sezione numerati ----- */
+.sec-title {
+  font-weight: bold;
+  color: #A8480E;
+  border-bottom: 0.5pt solid #e2d7cd;
+  padding-bottom: 1.5pt;
+  margin: 9pt 0 4pt;
+}
+
+/* Raggruppa una sezione per evitare che si spezzi a meta' pagina. */
+.section { page-break-inside: avoid; }
+
+/* ----- Liste dichiarazioni ----- */
+ul { margin: 3pt 0; padding-left: 14pt; }
+li { margin: 2pt 0; }
+
+/* ----- Tabelle dati ----- */
+table { width: 100%; border-collapse: collapse; }
+table.grid th,
+table.grid td {
+  border: 0.5pt solid #9a9a9a;
+  padding: 3pt 5pt;
+  font-size: 8.5pt;
+  vertical-align: top;
+}
+table.grid thead th {
+  background: #f3f0ec;
+  color: #2D2D2B;
+  text-align: left;
+  font-weight: bold;
+}
+/* le righe etichetta-valore (th in prima colonna) */
+table.grid tbody th {
+  background: #faf8f6;
+  text-align: left;
+  font-weight: bold;
+  width: 30%;
+}
+table.grid tbody tr { page-break-inside: avoid; }
+
+/* ----- Caselle di spunta ----- */
+.check { font-size: 11pt; color: #A8480E; }
+.choice { margin: 2pt 0; }
+
+/* ----- Box di testo libero (progetto formativo) ----- */
+.freebox {
+  border: 0.5pt solid #9a9a9a;
+  padding: 5pt;
+  min-height: 40pt;
+}
+
+/* ----- Firme ----- */
+.firme { margin-top: 18pt; }
+.firme td { padding: 0 10pt; }
+.firma-box {
+  border-top: 0.5pt solid #2D2D2B;
+  padding-top: 3pt;
+  text-align: center;
+  font-size: 8pt;
+}
+
+/* ----- Box token / QR ----- */
+.token-box {
+  border: 0.8pt solid #D35D13;
+  background: #fdf6f0;
+  padding: 7pt;
+  margin-top: 12pt;
+  page-break-inside: avoid;
+}
+.token-box .label { font-weight: bold; color: #A8480E; }
+.token-code {
+  font-family: dejavusansmono, monospace;
+  font-size: 12pt;
+  font-weight: bold;
+  letter-spacing: 1pt;
+  color: #2D2D2B;
+}
+
+/* ----- Footer (paginazione) ----- */
+.pdf-footer {
+  font-size: 7.5pt;
+  color: #5F5F5D;
+  border-top: 0.4pt solid #d8d2cb;
+  padding-top: 2pt;
+}
+</style></head><body><div class="sheet">
+<table class="letterhead">
+  <tr>
+    <td class="logo">
+              <img src="../formedil-moduli/templates/assets/logo.jpg" alt="FORMEDIL Lecce">
+          </td>
+    <td class="dest">
+      Spett.le Organismo Paritetico Settore Costruzioni<br>
+      <strong>FORMEDIL LECCE</strong><br>
+      Via Belgio – 73100 Lecce
+    </td>
+  </tr>
+</table>
+
+<p class="oggetto">
+  Oggetto: richiesta collaborazione – Art. 37 comma 12 D.Lgs 81/2008 s.m.i. –
+  Accordo Stato Regioni del 17/04/2025
+</p>
+
+<p class="intro">
+  Il sottoscritto <strong>Mario Rossi</strong>,
+  in riferimento all'azienda/impresa <strong>Edil Test Srl</strong>,
+  esercente l'attività di Costruzioni edili,
+  con sede legale in Via Roma 1, 73100 Lecce (LE),
+  telefono 0832000000, email info@ediltest.it,
+  PEC ediltest@pec.it, P.IVA 00743110157,
+  Codice ATECO F (Costruzioni), non iscritta a Casse Edili,
+  in qualità di SOGGETTO FORMATORE per i propri lavoratori
+  e in coerenza all'art. 37 comma 12 del D.Lgs 81/2008 e s.m.i. e del PUNTO 2 PARTE II
+  Accordo Stato Regioni del 17/04/2025,
+</p>
+
+<p class="chiede">CHIEDE A FORMEDIL LECCE LA COLLABORAZIONE</p>
+
+<p>per l'organizzazione e l'erogazione del seguente corso di formazione in materia di
+salute e sicurezza (riferimento normativo: Art. 37 c.12 D.Lgs 81/2008 - ASR 17/04/2025):</p>
+
+<div class="section">
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Corso di formazione generale per lavoratori      </div>
+  <div class="choice">
+    <span class="check">&#9745;</span>
+    Corso di formazione specifica per lavoratori (classe di rischio)          — <strong>rischio: Rischio alto</strong>
+      </div>
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Corso di formazione per preposti      </div>
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Corso di formazione per dirigenti      </div>
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Aggiornamento formazione specifica per lavoratori      </div>
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Aggiornamento formazione per preposti      </div>
+  <div class="choice">
+    <span class="check">&#9744;</span>
+    Aggiornamento formazione per dirigenti      </div>
+</div>
+
+<p>Il corso si svolgerà in modalità:
+  <strong>Presenza fisica</strong>
+</p>
+
+<p class="small muted">
+  e a tale scopo, consapevole della responsabilità penale e delle sanzioni di cui agli
+  artt. 75 e 76 del DPR 445/2000 in caso di dichiarazione mendace,
+</p>
+
+<p class="dichiara">DICHIARA QUANTO SEGUE:</p>
+
+<p class="sec-title">1. Organizzazione ed erogazione del corso</p>
+<ul class="small">
+      <li>Il corso riguarderà lavoratori dell'azienda e operanti nel settore di attività ATECO F (Costruzioni);</li>
+    <li>Il corso sarà organizzato ed erogato secondo quanto stabilito dall'Accordo Stato Regioni del 17/04/2025;</li>
+    <li>I docenti sono in possesso dei requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025;</li>
+    <li>È stato verificato che gli eventuali partecipanti di origine straniera hanno una comprensione e
+        conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate,
+        o in alternativa sarà assicurata la presenza di un interprete o di un mediatore culturale;</li>
+    <li>Tutti i partecipanti al corso sono lavoratori dell'azienda in oggetto;</li>
+    <li>Nel caso in cui il datore di lavoro abbia assunto anche la funzione di docente, è in possesso dei
+        requisiti per lo svolgimento diretto dei compiti del servizio di prevenzione e protezione.</li>
+  </ul>
+
+<p class="sec-title">2. Durata complessiva del corso</p>
+<p>Dal 01/07/2026 al 02/07/2026</p>
+
+
+<div class="section">
+<p class="sec-title">3. Località dove si svolgerà il corso</p>
+<table class="grid">
+  <tbody>
+    <tr><th>Sede svolgimento</th><td>Via Cantiere 5</td></tr>
+    <tr><th>Provincia / Comune / CAP</th><td>73100 Lecce (LE)</td></tr>
+  </tbody>
+</table>
+<table class="grid" style="margin-top:4pt;">
+  <thead>
+    <tr><th style="width:34%">Data</th><th>Dalle ore</th><th>Alle ore</th></tr>
+  </thead>
+  <tbody>
+      <tr>
+      <td>01/07/2026</td>
+      <td>09:00</td>
+      <td>13:00</td>
+    </tr>
+      <tr>
+      <td>02/07/2026</td>
+      <td>09:00</td>
+      <td>13:00</td>
+    </tr>
+    </tbody>
+</table>
+</div>
+
+<p class="sec-title">4. Progetto formativo di dettaglio</p>
+<p class="freebox">Modulo 1: rischi generali.<br />
+Modulo 2: DPI e procedure.</p>
+
+<div class="section">
+<p class="sec-title">5. Strumenti di verifica intermedi e/o finali</p>
+<p>
+      <span class="check">&#9745;</span>
+    Test &nbsp;&nbsp;
+      <span class="check">&#9744;</span>
+    Colloquio &nbsp;&nbsp;
+  </p>
+</div>
+
+<p class="sec-title">6. Partecipanti al corso (massimo 35)</p>
+<table class="grid">
+  <thead>
+    <tr><th style="width:6%">N.</th><th>Nome</th><th>Cognome</th><th>Codice Fiscale</th></tr>
+  </thead>
+  <tbody>
+      <tr>
+      <td>1</td>
+      <td>Luca</td>
+      <td>Bianchi</td>
+      <td>BNCLCU90C12E506O</td>
+          </tr>
+      <tr>
+      <td>2</td>
+      <td>Sara</td>
+      <td>Neri</td>
+      <td>NRESRA85S42E506T</td>
+          </tr>
+    </tbody>
+</table>
+
+<p class="sec-title">7. Nominativi dei docenti (massimo 4)</p>
+<table class="grid">
+  <thead>
+    <tr>
+      <th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Data di nascita</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+      <td>1</td>
+      <td>Anna</td>
+      <td>Verdi</td>
+      <td>03/03/1975</td>
+    </tr>
+    </tbody>
+</table>
+
+<p class="sec-title">8. Si impegna, pena la decadenza della collaborazione, a:</p>
+<ul class="small section">
+  <li>trasmettere la presente richiesta almeno 15 gg prima dell'erogazione del corso;</li>
+  <li>rispettare le eventuali indicazioni e suggerimenti di FORMEDIL LECCE;</li>
+  <li>informare tempestivamente FORMEDIL LECCE in caso di variazioni (annullamento, sede, orari, partecipanti);</li>
+  <li>trasmettere, se richiesto ed entro 15 gg, il registro delle presenze e le risultanze delle verifiche.</li>
+</ul>
+
+<p class="sec-title">9. Dichiara di essere a conoscenza che:</p>
+<ul class="small section">
+  <li>Durante i giorni di erogazione del corso, FORMEDIL LECCE si riserva la facoltà di effettuare, senza
+      necessità di preavviso, verifiche &quot;in loco&quot; sul regolare svolgimento delle attività formative.
+      In caso di divieto o impossibilità di accesso, o qualora si accerti che anche una sola delle
+      dichiarazioni rese non corrisponde, parzialmente o interamente, al vero, FORMEDIL LECCE si riserva
+      la facoltà di revocare la collaborazione richiesta.</li>
+</ul>
+
+<p><strong>Eventuali note o comunicazioni:</strong> Nessuna</p>
+
+<p><strong>Allegati:</strong></p>
+<ul class="small">
+      <li>Copia documento di identità del datore di lavoro</li>
+  </ul>
+
+<p>Sul sito www.formedillecce.it è presente l'informativa sulla privacy.</p>
+<p>
+  <span class="check">&#9745;</span> Autorizzo il trattamento dei dati &nbsp;&nbsp;
+  <span class="check">&#9744;</span> NON Autorizzo il trattamento dei dati
+</p>
+
+<p>Data: 13/07/2026</p>
+
+<table class="firme section">
+  <tr>
+          <td>
+        <div class="firma-box">Timbro e firma<br>Soggetto Formatore (impresa edile)</div>
+      </td>
+      </tr>
+</table>
+
+<div class="token-box">
+  <table>
+    <tr>
+      <td style="vertical-align:middle;">
+        <span class="label">Codice di invio documentazione</span><br>
+        <span class="token-code">FME-ANTE-PRIM-A001</span><br>
+        <span class="small muted">
+          Conserva questo codice. Dopo aver firmato digitalmente il PDF, vai su
+          moduli.formedillecce.it          → "Invia documentazione" e inserisci il codice per caricare il modulo firmato e gli allegati.
+        </span>
+      </td>
+      <td style="width:90pt; text-align:right; vertical-align:middle;">
+        <div style="width:80pt;height:80pt;border:1px dashed #999;text-align:center;font-size:8pt;color:#999;line-height:80pt;">QR</div>
+      </td>
+    </tr>
+  </table>
+</div>
+</div></body></html>

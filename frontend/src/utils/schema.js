@@ -51,6 +51,7 @@ export function emptyValue(field) {
     case 'acknowledgment':
       return false;
     case 'repeater':
+    case 'impreseRepeater':
     case 'partecipantiTable':
     case 'docentiTable':
       return [];

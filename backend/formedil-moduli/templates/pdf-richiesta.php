@@ -31,6 +31,24 @@ $docenti = is_array($d('docenti')) ? $d('docenti') : [];
 $privacy = $d('privacy');
 $logoSrc = $logoSrc ?? '';
 
+// Limiti massimi letti dallo schema (così non si disallineano dal form).
+$fieldMax = static function (string $name, int $def) use ($schema): int {
+    foreach (($schema['steps'] ?? []) as $st) {
+        foreach (($st['fields'] ?? []) as $ff) {
+            if (($ff['name'] ?? '') === $name) {
+                return (int) ($ff['max'] ?? $def);
+            }
+        }
+    }
+    return $def;
+};
+$maxPart = $fieldMax('partecipanti', 25);
+$maxDoc  = $fieldMax('docenti', 4);
+
+// Imprese (variante ENTE): lista ripetibile.
+$imprese = is_array($d('imprese')) ? $d('imprese') : [];
+$showImpresaCol = $isEnte && count($imprese) > 1;
+
 // Testo iscrizione Casse Edili dal radio + campi condizionati.
 $iscr = (string) $d('iscrizione_cassa');
 if ($iscr === 'cassa_edile') {
@@ -43,12 +61,7 @@ if ($iscr === 'cassa_edile') {
 
 // Specificazioni legate alla tipologia di corso.
 $specMap = [
-    'specifico'      => 'rischio: ' . Html::optionLabel($opt['rischio'] ?? [], $d('rischio_specifico')),
-    'figure_sistema' => 'figura: ' . Html::val($d('spec_figure')),
-    'mansione'       => 'mansione: ' . Html::val($d('spec_mansione')),
-    'addestramento'  => Html::val($d('spec_addestramento')),
-    'attrezzature'   => 'attrezzatura: ' . Html::val($d('spec_attrezzature')),
-    'altro'          => Html::val($d('spec_altro')),
+    'specifico' => 'rischio: ' . Html::optionLabel($opt['rischio'] ?? [], $d('rischio_specifico')),
 ];
 ?>
 
@@ -75,6 +88,44 @@ $specMap = [
   Accordo Stato Regioni del 17/04/2025
 </p>
 
+<?php if ($isEnte): ?>
+<p class="intro">
+  Il sottoscritto <strong><?= Html::val($d('rapp_nome')) ?> <?= Html::val($d('rapp_cognome')) ?></strong>,
+  in qualità di <?= Html::val($d('rapp_carica')) ?> dell'ente di formazione
+  <strong><?= Html::val($d('org_ragione_sociale')) ?></strong>
+  (indirizzo <?= Html::val($d('org_indirizzo')) ?>, tel. <?= Html::val($d('org_telefono')) ?>,
+  email <?= Html::val($d('org_email')) ?>, PEC <?= Html::val($d('org_pec')) ?>),
+  in qualità di SOGGETTO FORMATORE munito di specifico mandato dei datori di lavoro delle
+  imprese di seguito indicate,
+  e in coerenza all'art. 37 comma 12 del D.Lgs 81/2008 e s.m.i. e del PUNTO 2 PARTE II
+  Accordo Stato Regioni del 17/04/2025,
+</p>
+
+<div class="section">
+  <p class="sec-title">Imprese interessate</p>
+  <?php foreach ($imprese as $k => $im):
+      $imIscr = (string) ($im['iscrizione_cassa'] ?? '');
+      if ($imIscr === 'cassa_edile') {
+          $imIscrTxt = 'iscritta alla Cassa Edile di ' . Html::val($im['cassa_edile_provincia'] ?? '') . ' al n. ' . Html::val($im['cassa_edile_numero'] ?? '');
+      } elseif ($imIscr === 'edil_cassa') {
+          $imIscrTxt = 'iscritta alla Edil Cassa di ' . Html::val($im['edil_cassa_provincia'] ?? '') . ' al n. ' . Html::val($im['edil_cassa_numero'] ?? '');
+      } else {
+          $imIscrTxt = 'non iscritta a Casse Edili';
+      } ?>
+    <table class="grid" style="margin-bottom:5pt;">
+      <tbody>
+        <tr><th style="width:32%">Impresa <?= $k + 1 ?> — Ragione sociale</th><td><?= Html::val($im['azienda_ragione_sociale'] ?? '') ?></td></tr>
+        <tr><th>Datore di lavoro</th><td><?= Html::val($im['datore_nome'] ?? '') ?> <?= Html::val($im['datore_cognome'] ?? '') ?></td></tr>
+        <tr><th>P.IVA — Codice ATECO</th><td><?= Html::val($im['azienda_piva'] ?? '') ?> — <?= Html::val($im['azienda_ateco'] ?? '') ?></td></tr>
+        <tr><th>Esercente l'attività di</th><td><?= Html::val($im['azienda_esercente'] ?? '') ?></td></tr>
+        <tr><th>Sede legale</th><td><?= Html::val($im['azienda_indirizzo'] ?? '') ?>, <?= Html::luogo($im['azienda_sede'] ?? []) ?></td></tr>
+        <tr><th>Contatti</th><td>tel. <?= Html::val($im['azienda_telefono'] ?? '') ?> · email <?= Html::val($im['azienda_email'] ?? '') ?> · PEC <?= Html::val($im['azienda_pec'] ?? '') ?></td></tr>
+        <tr><th>Casse Edili</th><td><?= $imIscrTxt ?></td></tr>
+      </tbody>
+    </table>
+  <?php endforeach; ?>
+</div>
+<?php else: ?>
 <p class="intro">
   Il sottoscritto <strong><?= Html::val($d('datore_nome')) ?> <?= Html::val($d('datore_cognome')) ?></strong>,
   in riferimento all'azienda/impresa <strong><?= Html::val($d('azienda_ragione_sociale')) ?></strong>,
@@ -83,18 +134,11 @@ $specMap = [
   telefono <?= Html::val($d('azienda_telefono')) ?>, email <?= Html::val($d('azienda_email')) ?>,
   PEC <?= Html::val($d('azienda_pec')) ?>, P.IVA <?= Html::val($d('azienda_piva')) ?>,
   Codice ATECO <?= Html::val($d('azienda_ateco')) ?>, <?= $iscrTxt ?>,
-  <?php if ($isEnte): ?>
-    per il tramite del Soggetto Organizzatore
-    <strong><?= Html::val($d('org_ragione_sociale')) ?></strong>
-    (indirizzo <?= Html::val($d('org_indirizzo')) ?>, tel. <?= Html::val($d('org_telefono')) ?>,
-    email <?= Html::val($d('org_email')) ?>, PEC <?= Html::val($d('org_pec')) ?>),
-    in qualità di SOGGETTO FORMATORE munito di specifico mandato del datore di lavoro
-  <?php else: ?>
-    in qualità di SOGGETTO FORMATORE per i propri lavoratori
-  <?php endif; ?>
+  in qualità di SOGGETTO FORMATORE per i propri lavoratori
   e in coerenza all'art. 37 comma 12 del D.Lgs 81/2008 e s.m.i. e del PUNTO 2 PARTE II
   Accordo Stato Regioni del 17/04/2025,
 </p>
+<?php endif; ?>
 
 <p class="chiede">CHIEDE A FORMEDIL LECCE LA COLLABORAZIONE</p>
 
@@ -212,10 +256,10 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 </div>
 
 <?php $n++; ?>
-<p class="sec-title"><?= $n ?>. Partecipanti al corso (massimo 25)</p>
+<p class="sec-title"><?= $n ?>. Partecipanti al corso (massimo <?= $maxPart ?>)</p>
 <table class="grid">
   <thead>
-    <tr><th style="width:8%">N.</th><th style="width:34%">Nome</th><th style="width:34%">Cognome</th><th>Codice Fiscale</th></tr>
+    <tr><th style="width:6%">N.</th><th>Nome</th><th>Cognome</th><th>Codice Fiscale</th><?php if ($showImpresaCol): ?><th>Impresa</th><?php endif; ?></tr>
   </thead>
   <tbody>
   <?php if ($partecipanti): foreach ($partecipanti as $i => $p): ?>
@@ -224,15 +268,16 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
       <td><?= Html::val($p['nome'] ?? '') ?></td>
       <td><?= Html::val($p['cognome'] ?? '') ?></td>
       <td><?= Html::val($p['codice_fiscale'] ?? '') ?></td>
+      <?php if ($showImpresaCol): ?><td><?= Html::val($p['impresa'] ?? '') ?></td><?php endif; ?>
     </tr>
   <?php endforeach; else: ?>
-    <tr><td>1</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>1</td><td>—</td><td>—</td><td>—</td><?php if ($showImpresaCol): ?><td>—</td><?php endif; ?></tr>
   <?php endif; ?>
   </tbody>
 </table>
 
 <?php $n++; ?>
-<p class="sec-title"><?= $n ?>. Nominativi dei docenti (massimo 4)</p>
+<p class="sec-title"><?= $n ?>. Nominativi dei docenti (massimo <?= $maxDoc ?>)</p>
 <table class="grid">
   <thead>
     <tr>
@@ -265,9 +310,6 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
 <?php $n++; ?>
 <p class="sec-title"><?= $n ?>. Dichiara di essere a conoscenza che:</p>
 <ul class="small section">
-  <?php if (!$isEnte): ?>
-    <li>FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F);</li>
-  <?php endif; ?>
   <li>Durante i giorni di erogazione del corso, FORMEDIL LECCE si riserva la facoltà di effettuare, senza
       necessità di preavviso, verifiche &quot;in loco&quot; sul regolare svolgimento delle attività formative.
       In caso di divieto o impossibilità di accesso, o qualora si accerti che anche una sola delle

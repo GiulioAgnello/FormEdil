@@ -1,3 +1,5 @@
+import { fieldActive } from '@/utils/schema';
+
 /**
  * Validatori lato client — mirror della logica backend.
  * La fonte di verità resta il server (che rivalida sempre): qui diamo solo
@@ -86,6 +88,22 @@ export function validateField(field, value) {
         ? 'È necessario accettare questa dichiarazione.'
         : null;
 
+    case 'impreseRepeater': {
+      const items = Array.isArray(value) ? value : [];
+      const min = field.min ?? 1;
+      const max = field.max ?? null;
+      if (items.length < min) return `Inserire almeno ${min} impresa/e.`;
+      if (max !== null && items.length > max) return `Massimo ${max} imprese consentite.`;
+      const itemFields = field.itemFields || [];
+      for (const it of items) {
+        const active = itemFields.filter((f) => fieldActive(f, 'ENTE', it));
+        if (Object.keys(validateRow(active, it)).length > 0) {
+          return 'Completa i dati di tutte le imprese inserite.';
+        }
+      }
+      return null;
+    }
+
     case 'repeater':
     case 'partecipantiTable':
     case 'docentiTable':
@@ -122,6 +140,13 @@ export function validateRow(itemFields, row) {
   const errors = {};
   for (const sub of itemFields) {
     const val = row?.[sub.name];
+    if (sub.type === 'provinciaComuneCap') {
+      const o = val && typeof val === 'object' ? val : {};
+      if (sub.required && (isEmpty(o.provincia) || isEmpty(o.comune) || isEmpty(o.cap))) {
+        errors[sub.name] = 'Provincia, comune e CAP obbligatori.';
+      }
+      continue;
+    }
     if (isEmpty(val)) {
       if (sub.required) errors[sub.name] = 'Obbligatorio.';
       continue;

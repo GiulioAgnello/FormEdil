@@ -73,6 +73,8 @@ export default function Wizard({ schema, variante, onSubmit }) {
                 value={w.dati[field.name]}
                 error={w.errors[field.name]}
                 onChange={(v) => w.setField(field.name, v)}
+                dati={w.dati}
+                variante={variante}
               />
             </div>
           ))}

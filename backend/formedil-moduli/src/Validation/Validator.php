@@ -41,6 +41,21 @@ final class Validator
             }
         }
 
+        // Variante ENTE con più imprese: ogni partecipante deve indicare l'impresa.
+        if ($variante === 'ENTE') {
+            $imprese = $dati['imprese'] ?? [];
+            if (is_array($imprese) && count($imprese) > 1) {
+                $parts = $dati['partecipanti'] ?? [];
+                if (is_array($parts)) {
+                    foreach ($parts as $i => $p) {
+                        if (is_array($p) && trim((string) ($p['impresa'] ?? '')) === '') {
+                            $this->errors["partecipanti.{$i}.impresa"] = 'Indicare l\'impresa del partecipante.';
+                        }
+                    }
+                }
+            }
+        }
+
         return $this->errors;
     }
 
@@ -80,6 +95,10 @@ final class Validator
                 if ($required && $value !== true) {
                     $this->errors[$name] = 'È necessario accettare questa dichiarazione.';
                 }
+                break;
+
+            case 'impreseRepeater':
+                $this->validateImprese($field, is_array($value) ? $value : []);
                 break;
 
             case 'repeater':
@@ -148,6 +167,77 @@ final class Validator
         }
         if ($required && $cap === '') {
             $this->errors[$name] = 'Indicare il CAP.';
+        }
+    }
+
+    /**
+     * Valida la lista ripetibile di imprese (variante ENTE): conteggio min/max
+     * e, per ogni impresa, i campi dell'itemFields rispettando le condizioni
+     * interne (casse edili) e i campi provincia/comune/CAP.
+     *
+     * @param array<string,mixed> $field
+     * @param array<int,mixed> $items
+     */
+    private function validateImprese(array $field, array $items): void
+    {
+        $name = (string) $field['name'];
+        $min = (int) ($field['min'] ?? 1);
+        $max = isset($field['max']) ? (int) $field['max'] : null;
+        $count = count($items);
+
+        if ($count < $min) {
+            $this->errors[$name] = 'Inserire almeno ' . $min . ' impresa/e.';
+            return;
+        }
+        if ($max !== null && $count > $max) {
+            $this->errors[$name] = 'Massimo ' . $max . ' imprese consentite.';
+            return;
+        }
+
+        foreach ($items as $i => $item) {
+            if (!is_array($item)) {
+                $this->errors["{$name}.{$i}"] = 'Impresa non valida.';
+                continue;
+            }
+            foreach (($field['itemFields'] ?? []) as $sub) {
+                if (!$this->conditionMet($sub['condition'] ?? null, $item)) {
+                    continue;
+                }
+                $subName = (string) $sub['name'];
+                $subType = (string) ($sub['type'] ?? 'text');
+                $subReq = (bool) ($sub['required'] ?? false);
+                $val = $item[$subName] ?? null;
+                $key = "{$name}.{$i}.{$subName}";
+
+                if ($subType === 'provinciaComuneCap') {
+                    $v = is_array($val) ? $val : [];
+                    $prov = trim((string) ($v['provincia'] ?? ''));
+                    $com = trim((string) ($v['comune'] ?? ''));
+                    $cap = trim((string) ($v['cap'] ?? ''));
+                    if ($prov === '' || $com === '') {
+                        if ($subReq) {
+                            $this->errors[$key] = 'Selezionare provincia e comune.';
+                        }
+                    } elseif ($cap !== '' && !preg_match('/^[0-9]{5}$/', $cap)) {
+                        $this->errors[$key] = 'CAP non valido.';
+                    } elseif ($subReq && $cap === '') {
+                        $this->errors[$key] = 'Indicare il CAP.';
+                    }
+                    continue;
+                }
+
+                $str = is_string($val) ? trim($val) : (is_scalar($val) ? (string) $val : '');
+                if ($str === '') {
+                    if ($subReq) {
+                        $this->errors[$key] = 'Campo obbligatorio.';
+                    }
+                    continue;
+                }
+                $err = $this->checkFormat($sub['validation'] ?? null, $str);
+                if ($err !== null) {
+                    $this->errors[$key] = $err;
+                }
+            }
         }
     }
 

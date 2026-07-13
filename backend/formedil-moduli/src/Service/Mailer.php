@@ -33,7 +33,7 @@ final class Mailer
      */
     public static function praticaInserita(array $dati, string $token, string $invioUrl, string $pdfPath): void
     {
-        $azienda = trim((string) ($dati['azienda_ragione_sociale'] ?? ''));
+        $azienda = trim((string) ($dati['azienda_ragione_sociale'] ?? '')) ?: trim((string) ($dati['org_ragione_sociale'] ?? ''));
         $intro = $azienda !== ''
             ? sprintf('Gentile %s,', esc_html($azienda))
             : 'Gentile richiedente,';
@@ -67,7 +67,7 @@ final class Mailer
      */
     public static function documentiRicevuti(array $dati, string $token): void
     {
-        $azienda = trim((string) ($dati['azienda_ragione_sociale'] ?? ''));
+        $azienda = trim((string) ($dati['azienda_ragione_sociale'] ?? '')) ?: trim((string) ($dati['org_ragione_sociale'] ?? ''));
         $intro = $azienda !== ''
             ? sprintf('Gentile %s,', esc_html($azienda))
             : 'Gentile richiedente,';
@@ -131,7 +131,24 @@ final class Mailer
      */
     private static function recipient(array $dati): string
     {
-        return trim((string) ($dati['azienda_email'] ?? ''));
+        $to = trim((string) ($dati['azienda_email'] ?? ''));
+        if ($to === '') {
+            // ENTE: nessuna azienda_email a livello alto -> ente formatore, poi prima impresa.
+            $to = trim((string) ($dati['org_email'] ?? ''));
+        }
+        if ($to === '') {
+            $imprese = is_array($dati['imprese'] ?? null) ? $dati['imprese'] : [];
+            foreach ($imprese as $im) {
+                if (is_array($im)) {
+                    $e = trim((string) ($im['azienda_email'] ?? ''));
+                    if ($e !== '') {
+                        $to = $e;
+                        break;
+                    }
+                }
+            }
+        }
+        return $to;
     }
 
     /** @return array<int,string> */

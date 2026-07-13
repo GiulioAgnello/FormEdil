@@ -2,15 +2,25 @@ import FieldWrapper from './FieldWrapper';
 import { isValidCF } from '@/utils/validators';
 
 /**
- * Tabella partecipanti (max 30) con INCOLLA DA EXCEL.
+ * Tabella partecipanti con INCOLLA DA EXCEL.
  * Incollando un blocco multi-riga/multi-colonna da un foglio di calcolo, le
  * celle si riempiono automaticamente a partire dalla cella di partenza.
- * Le colonne sono guidate dallo schema (field.itemFields).
+ * Le colonne dei dati anagrafici sono guidate dallo schema (field.itemFields).
+ * In variante ENTE, se sono state inserite piu' imprese, compare una colonna
+ * "Impresa" per indicare a quale azienda appartiene ciascun partecipante.
  */
-export default function ParticipantsTable({ field, value, error, onChange }) {
+export default function ParticipantsTable({ field, value, error, onChange, dati, variante }) {
   const rows = Array.isArray(value) ? value : [];
   const cols = field.itemFields || [];
   const max = field.max || 30;
+
+  // Opzioni impresa (solo ENTE con piu' di una impresa).
+  const imprese =
+    variante === 'ENTE' && dati && Array.isArray(dati.imprese) ? dati.imprese : [];
+  const impreseOpts = imprese
+    .map((im) => String(im?.azienda_ragione_sociale || '').trim())
+    .filter((n) => n !== '');
+  const showImpresa = impreseOpts.length > 1;
 
   const emptyRow = () => Object.fromEntries(cols.map((c) => [c.name, '']));
   const ensureOne = rows.length ? rows : [emptyRow()];
@@ -35,7 +45,6 @@ export default function ParticipantsTable({ field, value, error, onChange }) {
   /** Incolla a blocco (Excel/TSV) partendo da (startRow, startCol). */
   const handlePaste = (startRow, startCol, e) => {
     const text = e.clipboardData?.getData('text') ?? '';
-    // Solo se è un blocco multi-cella, altrimenti lascia il paste normale.
     if (!/\t|\r|\n/.test(text)) return;
     e.preventDefault();
 
@@ -86,6 +95,7 @@ export default function ParticipantsTable({ field, value, error, onChange }) {
               {cols.map((c) => (
                 <th key={c.name}>{c.label}</th>
               ))}
+              {showImpresa ? <th>Impresa</th> : null}
               <th style={{ width: '6%' }} aria-label="azioni"></th>
             </tr>
           </thead>
@@ -108,6 +118,22 @@ export default function ParticipantsTable({ field, value, error, onChange }) {
                     </td>
                   );
                 })}
+                {showImpresa ? (
+                  <td>
+                    <select
+                      className="input input--cell"
+                      value={row.impresa || ''}
+                      onChange={(e) => setCell(i, 'impresa', e.target.value)}
+                    >
+                      <option value="">— Seleziona —</option>
+                      {impreseOpts.map((nome) => (
+                        <option key={nome} value={nome}>
+                          {nome}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                ) : null}
                 <td>
                   <button
                     type="button"

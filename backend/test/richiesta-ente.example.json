@@ -1,0 +1,124 @@
+{
+  "variante": "ENTE",
+  "dati": {
+    "rapp_nome": "Paolo",
+    "rapp_cognome": "Neri",
+    "rapp_carica": "Amministratore",
+    "org_ragione_sociale": "Formazione Sicura S.r.l.",
+    "org_indirizzo": "Viale Marconi 10, Lecce",
+    "org_telefono": "0832998877",
+    "org_email": "info@formazionesicura.it",
+    "org_pec": "formazione.sicura@pec.it",
+    "rpf_nome": "Ing. Antonio Sereno",
+    "rpf_indirizzo": "Viale Marconi 10, Lecce",
+    "rpf_telefono": "0832998878",
+    "rpf_email": "a.sereno@formazionesicura.it",
+    "imprese": [
+      {
+        "datore_nome": "Giuseppe",
+        "datore_cognome": "Esposito",
+        "azienda_ragione_sociale": "Edilizia Esposito S.r.l.",
+        "azienda_piva": "03456789753",
+        "azienda_esercente": "Costruzioni edili",
+        "azienda_indirizzo": "Via Salvatore Trinchese 45",
+        "azienda_sede": {
+          "provincia": "LE",
+          "provincia_nome": "Lecce",
+          "comune": "Lecce",
+          "cap": "73100"
+        },
+        "azienda_telefono": "0832123456",
+        "azienda_email": "info@ediliziaesposito.it",
+        "azienda_pec": "edilizia.esposito@pec.it",
+        "iscrizione_cassa": "cassa_edile",
+        "cassa_edile_provincia": "Lecce",
+        "cassa_edile_numero": "12345",
+        "azienda_ateco": "F (Costruzioni)"
+      },
+      {
+        "datore_nome": "Francesca",
+        "datore_cognome": "Greco",
+        "azienda_ragione_sociale": "Costruzioni Greco S.n.c.",
+        "azienda_piva": "04567890753",
+        "azienda_esercente": "Lavori edili e ristrutturazioni",
+        "azienda_indirizzo": "Via Giudecca 28",
+        "azienda_sede": {
+          "provincia": "LE",
+          "provincia_nome": "Lecce",
+          "comune": "Sternatia",
+          "cap": "73010"
+        },
+        "azienda_telefono": "0836654321",
+        "azienda_email": "info@costruzionigreco.it",
+        "azienda_pec": "costruzioni.greco@pec.it",
+        "iscrizione_cassa": "edil_cassa",
+        "edil_cassa_provincia": "Lecce",
+        "edil_cassa_numero": "67890",
+        "azienda_ateco": "F (Costruzioni)"
+      }
+    ],
+    "riferimento_normativo": "Accordo Stato Regioni del 17/04/2025",
+    "tipo_corso": "specifico",
+    "rischio_specifico": "medio",
+    "modalita": "presenza",
+    "durata_dal": "2026-08-03",
+    "durata_al": "2026-08-04",
+    "sede_indirizzo": "Viale Marconi 10",
+    "sede_luogo": {
+      "provincia": "LE",
+      "provincia_nome": "Lecce",
+      "comune": "Lecce",
+      "cap": "73100"
+    },
+    "giornate": [
+      {
+        "data": "2026-08-03",
+        "ora_inizio": "09:00",
+        "ora_fine": "13:00"
+      }
+    ],
+    "progetto_formativo": "Formazione specifica rischio medio: rischi del settore costruzioni, DPI, procedure di sicurezza, gestione emergenze.",
+    "strumenti_verifica": [
+      "test"
+    ],
+    "partecipanti": [
+      {
+        "nome": "Mario",
+        "cognome": "Rossi",
+        "codice_fiscale": "RSSMRA80C12E506Q",
+        "impresa": "Edilizia Esposito S.r.l."
+      },
+      {
+        "nome": "Luigi",
+        "cognome": "Bianchi",
+        "codice_fiscale": "BNCLGU75L04E506B",
+        "impresa": "Edilizia Esposito S.r.l."
+      },
+      {
+        "nome": "Anna",
+        "cognome": "Verdi",
+        "codice_fiscale": "VRDNNA88S63E506V",
+        "impresa": "Costruzioni Greco S.n.c."
+      }
+    ],
+    "docenti": [
+      {
+        "nome": "Marco",
+        "cognome": "Longo",
+        "data_nascita": "1964-03-17"
+      }
+    ],
+    "ack_responsabilita": true,
+    "ack_settore": true,
+    "ack_mandato": true,
+    "ack_organizzazione": true,
+    "ack_formatore": true,
+    "ack_docenti": true,
+    "ack_rpf": true,
+    "ack_lingua": true,
+    "ack_impegni": true,
+    "ack_verifiche": true,
+    "note": "",
+    "privacy": "autorizzo"
+  }
+}

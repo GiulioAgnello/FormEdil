@@ -8,68 +8,113 @@
     "maxPartecipanti": 25,
     "maxDocenti": 4
   },
-
   "variants": {
     "IMPRESA": {
       "label": "Impresa edile",
       "subtitle": "Compila il modulo per attivare un corso per i tuoi dipendenti",
-      "firme": ["Soggetto Formatore (impresa edile)"],
-      "allegati": ["Copia documento di identità del datore di lavoro"]
+      "firme": [
+        "Soggetto Formatore (impresa edile)"
+      ],
+      "allegati": [
+        "Copia documento di identità del datore di lavoro"
+      ]
     },
     "ENTE": {
       "label": "Ente di formazione",
       "subtitle": "Richiedi una collaborazione per attivare un corso attraverso il tuo Ente di Formazione",
-      "firme": ["Soggetto Formatore che eroga il corso", "Impresa"],
+      "firme": [
+        "Soggetto Formatore che eroga il corso",
+        "Impresa"
+      ],
       "allegati": [
         "Copia documento di identità del rappresentante legale dell'Ente di Formazione",
         "Copia documento di identità del datore di lavoro dell'impresa richiedente"
       ]
     }
   },
-
   "options": {
     "tipiCorso": [
-      { "value": "generale", "label": "Corso di formazione generale" },
+      {
+        "value": "generale",
+        "label": "Corso di formazione generale per lavoratori"
+      },
       {
         "value": "specifico",
-        "label": "Corso di formazione specifico",
+        "label": "Corso di formazione specifica per lavoratori (classe di rischio)",
         "extra": "rischio"
       },
-      { "value": "preposti", "label": "Corso di formazione per preposti" },
-      { "value": "dirigenti", "label": "Corso di formazione per dirigenti" },
       {
-        "value": "figure_sistema",
-        "label": "Corso di formazione per figure di sistema"
+        "value": "preposti",
+        "label": "Corso di formazione per preposti"
       },
       {
-        "value": "mansione",
-        "label": "Corso di formazione specifico per la mansione di…"
+        "value": "dirigenti",
+        "label": "Corso di formazione per dirigenti"
       },
-      { "value": "addestramento", "label": "Corso di addestramento specifico" },
       {
-        "value": "attrezzature",
-        "label": "Corso di formazione sulle attrezzature di lavoro"
+        "value": "agg_specifico",
+        "label": "Aggiornamento formazione specifica per lavoratori"
       },
-      { "value": "altro", "label": "Altro" }
+      {
+        "value": "agg_preposti",
+        "label": "Aggiornamento formazione per preposti"
+      },
+      {
+        "value": "agg_dirigenti",
+        "label": "Aggiornamento formazione per dirigenti"
+      }
     ],
     "rischio": [
-      { "value": "basso", "label": "Rischio basso" },
-      { "value": "medio", "label": "Rischio medio" },
-      { "value": "alto", "label": "Rischio alto" }
+      {
+        "value": "basso",
+        "label": "Rischio basso"
+      },
+      {
+        "value": "medio",
+        "label": "Rischio medio"
+      },
+      {
+        "value": "alto",
+        "label": "Rischio alto"
+      }
     ],
     "modalita": [
-      { "value": "presenza", "label": "Presenza fisica" },
-      { "value": "videoconferenza", "label": "Video conferenza sincrona" },
-      { "value": "elearning", "label": "E-Learning" }
+      {
+        "value": "presenza",
+        "label": "Presenza fisica"
+      },
+      {
+        "value": "videoconferenza",
+        "label": "Video conferenza sincrona"
+      },
+      {
+        "value": "elearning",
+        "label": "E-Learning"
+      }
     ],
     "strumentiVerifica": [
-      { "value": "test", "label": "Test" },
-      { "value": "colloquio", "label": "Colloquio" }
+      {
+        "value": "test",
+        "label": "Test"
+      },
+      {
+        "value": "colloquio",
+        "label": "Colloquio"
+      }
     ],
     "iscrizioneCassa": [
-      { "value": "cassa_edile", "label": "Iscritta a Cassa Edile" },
-      { "value": "edil_cassa", "label": "Iscritta a Edil Cassa" },
-      { "value": "non_iscritta", "label": "NON iscritta a Casse Edili" }
+      {
+        "value": "cassa_edile",
+        "label": "Iscritta a Cassa Edile"
+      },
+      {
+        "value": "edil_cassa",
+        "label": "Iscritta a Edil Cassa"
+      },
+      {
+        "value": "non_iscritta",
+        "label": "NON iscritta a Casse Edili"
+      }
     ],
     "privacy": [
       {
@@ -82,8 +127,297 @@
       }
     ]
   },
-
   "steps": [
+    {
+      "id": "ente",
+      "title": "Ente di formazione",
+      "description": "Rappresentante e dati del Soggetto Formatore",
+      "variants": [
+        "ENTE"
+      ],
+      "fields": [
+        {
+          "name": "rapp_nome",
+          "label": "Rappresentante - Nome",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 6
+        },
+        {
+          "name": "rapp_cognome",
+          "label": "Rappresentante - Cognome",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 6
+        },
+        {
+          "name": "rapp_carica",
+          "label": "Carica / qualità (es. Amministratore, Legale rappresentante)",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 12
+        },
+        {
+          "name": "org_ragione_sociale",
+          "label": "Ente di formazione - Ragione Sociale",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 12
+        },
+        {
+          "name": "org_indirizzo",
+          "label": "Indirizzo",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 12
+        },
+        {
+          "name": "org_telefono",
+          "label": "Telefono",
+          "type": "tel",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 4
+        },
+        {
+          "name": "org_email",
+          "label": "E-mail",
+          "type": "email",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "validation": "email",
+          "col": 4
+        },
+        {
+          "name": "org_pec",
+          "label": "PEC",
+          "type": "email",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "validation": "email",
+          "col": 4
+        },
+        {
+          "name": "rpf_nome",
+          "label": "Responsabile Progetto Formativo - Rag. Soc. / Cognome Nome",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 12
+        },
+        {
+          "name": "rpf_indirizzo",
+          "label": "Indirizzo",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 12
+        },
+        {
+          "name": "rpf_telefono",
+          "label": "Telefono",
+          "type": "tel",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "col": 6
+        },
+        {
+          "name": "rpf_email",
+          "label": "E-mail",
+          "type": "email",
+          "required": false,
+          "variants": [
+            "ENTE"
+          ],
+          "validation": "email",
+          "col": 6
+        }
+      ]
+    },
+    {
+      "id": "imprese",
+      "title": "Imprese interessate",
+      "description": "Aggiungi una o più imprese per cui l'ente richiede la collaborazione",
+      "variants": [
+        "ENTE"
+      ],
+      "fields": [
+        {
+          "name": "imprese",
+          "label": "Imprese",
+          "type": "impreseRepeater",
+          "required": true,
+          "variants": [
+            "ENTE"
+          ],
+          "min": 1,
+          "max": 20,
+          "itemFields": [
+            {
+              "name": "datore_nome",
+              "label": "Nome",
+              "type": "text",
+              "required": true,
+              "col": 6
+            },
+            {
+              "name": "datore_cognome",
+              "label": "Cognome",
+              "type": "text",
+              "required": true,
+              "col": 6
+            },
+            {
+              "name": "azienda_ragione_sociale",
+              "label": "Ragione Sociale",
+              "type": "text",
+              "required": true,
+              "col": 12
+            },
+            {
+              "name": "azienda_piva",
+              "label": "Partita IVA",
+              "type": "text",
+              "required": true,
+              "validation": "piva",
+              "col": 6
+            },
+            {
+              "name": "azienda_esercente",
+              "label": "Esercente l'attività di",
+              "type": "text",
+              "required": true,
+              "col": 6
+            },
+            {
+              "name": "azienda_indirizzo",
+              "label": "Indirizzo sede legale",
+              "type": "text",
+              "required": true,
+              "placeholder": "Via e numero civico",
+              "col": 12
+            },
+            {
+              "name": "azienda_sede",
+              "label": "Provincia / Comune / CAP",
+              "type": "provinciaComuneCap",
+              "required": true,
+              "col": 12
+            },
+            {
+              "name": "azienda_telefono",
+              "label": "Telefono",
+              "type": "tel",
+              "required": true,
+              "col": 4
+            },
+            {
+              "name": "azienda_email",
+              "label": "E-Mail",
+              "type": "email",
+              "required": true,
+              "validation": "email",
+              "col": 4
+            },
+            {
+              "name": "azienda_pec",
+              "label": "PEC",
+              "type": "email",
+              "required": true,
+              "validation": "email",
+              "col": 4
+            },
+            {
+              "name": "iscrizione_cassa",
+              "label": "Iscrizione a Casse Edili",
+              "type": "radio",
+              "required": true,
+              "optionsRef": "iscrizioneCassa",
+              "col": 12
+            },
+            {
+              "name": "cassa_edile_provincia",
+              "label": "Cassa Edile di (provincia)",
+              "type": "text",
+              "required": true,
+              "condition": {
+                "field": "iscrizione_cassa",
+                "equals": "cassa_edile"
+              },
+              "col": 6
+            },
+            {
+              "name": "cassa_edile_numero",
+              "label": "N° iscrizione Cassa Edile",
+              "type": "text",
+              "required": true,
+              "condition": {
+                "field": "iscrizione_cassa",
+                "equals": "cassa_edile"
+              },
+              "col": 6
+            },
+            {
+              "name": "edil_cassa_provincia",
+              "label": "Edil Cassa di (provincia)",
+              "type": "text",
+              "required": true,
+              "condition": {
+                "field": "iscrizione_cassa",
+                "equals": "edil_cassa"
+              },
+              "col": 6
+            },
+            {
+              "name": "edil_cassa_numero",
+              "label": "N° iscrizione Edil Cassa",
+              "type": "text",
+              "required": true,
+              "condition": {
+                "field": "iscrizione_cassa",
+                "equals": "edil_cassa"
+              },
+              "col": 6
+            },
+            {
+              "name": "azienda_ateco",
+              "label": "Codice ATECO (Accordo Stato Regioni del 17/04/2025)",
+              "type": "text",
+              "required": true,
+              "placeholder": "F (Costruzioni)",
+              "col": 12
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "anagrafica",
       "title": "Dati anagrafici",
@@ -94,7 +428,9 @@
           "label": "Nome",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 6
         },
         {
@@ -102,16 +438,19 @@
           "label": "Cognome",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 6
         },
-
         {
           "name": "azienda_ragione_sociale",
           "label": "Ragione Sociale",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -119,7 +458,9 @@
           "label": "Partita IVA",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "validation": "piva",
           "col": 6
         },
@@ -128,7 +469,9 @@
           "label": "Esercente l'attività di",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 6
         },
         {
@@ -136,7 +479,9 @@
           "label": "Indirizzo sede legale",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "placeholder": "Via e numero civico",
           "col": 12
         },
@@ -145,7 +490,9 @@
           "label": "Provincia / Comune / CAP",
           "type": "provinciaComuneCap",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -153,7 +500,9 @@
           "label": "Telefono",
           "type": "tel",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 4
         },
         {
@@ -161,7 +510,9 @@
           "label": "E-Mail",
           "type": "email",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "validation": "email",
           "col": 4
         },
@@ -170,26 +521,20 @@
           "label": "PEC",
           "type": "email",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "validation": "email",
           "col": 4
         },
-        {
-          "name": "azienda_ateco",
-          "label": "Codice ATECO (Accordo Stato Regioni del 21/12/2011)",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "placeholder": "F (Costruzioni)",
-          "col": 6
-        },
-
         {
           "name": "iscrizione_cassa",
           "label": "Iscrizione a Casse Edili",
           "type": "radio",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA"
+          ],
           "optionsRef": "iscrizioneCassa",
           "col": 12
         },
@@ -198,8 +543,13 @@
           "label": "Cassa Edile di (provincia)",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" },
+          "variants": [
+            "IMPRESA"
+          ],
+          "condition": {
+            "field": "iscrizione_cassa",
+            "equals": "cassa_edile"
+          },
           "col": 6
         },
         {
@@ -207,8 +557,13 @@
           "label": "N° iscrizione Cassa Edile",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "iscrizione_cassa", "equals": "cassa_edile" },
+          "variants": [
+            "IMPRESA"
+          ],
+          "condition": {
+            "field": "iscrizione_cassa",
+            "equals": "cassa_edile"
+          },
           "col": 6
         },
         {
@@ -216,8 +571,13 @@
           "label": "Edil Cassa di (provincia)",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" },
+          "variants": [
+            "IMPRESA"
+          ],
+          "condition": {
+            "field": "iscrizione_cassa",
+            "equals": "edil_cassa"
+          },
           "col": 6
         },
         {
@@ -225,13 +585,31 @@
           "label": "N° iscrizione Edil Cassa",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "iscrizione_cassa", "equals": "edil_cassa" },
+          "variants": [
+            "IMPRESA"
+          ],
+          "condition": {
+            "field": "iscrizione_cassa",
+            "equals": "edil_cassa"
+          },
           "col": 6
+        },
+        {
+          "name": "azienda_ateco",
+          "label": "Codice ATECO (Accordo Stato Regioni del 17/04/2025)",
+          "type": "text",
+          "required": true,
+          "variants": [
+            "IMPRESA"
+          ],
+          "placeholder": "F (Costruzioni)",
+          "col": 12
         }
+      ],
+      "variants": [
+        "IMPRESA"
       ]
     },
-
     {
       "id": "corso",
       "title": "Indicazioni corso",
@@ -242,16 +620,21 @@
           "label": "Riferimento normativo del corso",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
-
         {
           "name": "tipo_corso",
           "label": "Tipologia di intervento formativo",
           "type": "radio",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "optionsRef": "tipiCorso",
           "help": "Per ogni corso è necessario compilare un modulo.",
           "col": 12
@@ -261,63 +644,26 @@
           "label": "Livello di rischio",
           "type": "select",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "optionsRef": "rischio",
-          "condition": { "field": "tipo_corso", "equals": "specifico" },
+          "condition": {
+            "field": "tipo_corso",
+            "equals": "specifico"
+          },
           "col": 6
         },
-        {
-          "name": "spec_figure",
-          "label": "Specificare quale figura di sistema",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "tipo_corso", "equals": "figure_sistema" },
-          "col": 12
-        },
-        {
-          "name": "spec_mansione",
-          "label": "Specificare quale mansione",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "tipo_corso", "equals": "mansione" },
-          "col": 12
-        },
-        {
-          "name": "spec_addestramento",
-          "label": "Specificare l'addestramento",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "tipo_corso", "equals": "addestramento" },
-          "col": 12
-        },
-        {
-          "name": "spec_attrezzature",
-          "label": "Specificare quale attrezzatura",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "tipo_corso", "equals": "attrezzature" },
-          "col": 12
-        },
-        {
-          "name": "spec_altro",
-          "label": "Specificare",
-          "type": "text",
-          "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "condition": { "field": "tipo_corso", "equals": "altro" },
-          "col": 12
-        },
-
         {
           "name": "modalita",
           "label": "Modalità di svolgimento",
           "type": "select",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "optionsRef": "modalita",
           "col": 6
         },
@@ -326,7 +672,10 @@
           "label": "Durata complessiva - dal",
           "type": "date",
           "required": false,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 6
         },
         {
@@ -334,97 +683,14 @@
           "label": "Durata complessiva - al",
           "type": "date",
           "required": false,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 6
         }
       ]
     },
-
-    {
-      "id": "ente",
-      "title": "Ente di formazione",
-      "description": "Soggetto organizzatore e responsabile del progetto formativo",
-      "variants": ["ENTE"],
-      "fields": [
-        {
-          "name": "org_ragione_sociale",
-          "label": "Soggetto Organizzatore - Rag. Soc. / Cognome Nome",
-          "type": "text",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 12
-        },
-        {
-          "name": "org_indirizzo",
-          "label": "Indirizzo",
-          "type": "text",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 12
-        },
-        {
-          "name": "org_telefono",
-          "label": "Telefono",
-          "type": "tel",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 4
-        },
-        {
-          "name": "org_email",
-          "label": "E-mail",
-          "type": "email",
-          "required": true,
-          "variants": ["ENTE"],
-          "validation": "email",
-          "col": 4
-        },
-        {
-          "name": "org_pec",
-          "label": "PEC",
-          "type": "email",
-          "required": true,
-          "variants": ["ENTE"],
-          "validation": "email",
-          "col": 4
-        },
-
-        {
-          "name": "rpf_nome",
-          "label": "Responsabile Progetto Formativo - Rag. Soc. / Cognome Nome",
-          "type": "text",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 12
-        },
-        {
-          "name": "rpf_indirizzo",
-          "label": "Indirizzo",
-          "type": "text",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 12
-        },
-        {
-          "name": "rpf_telefono",
-          "label": "Telefono",
-          "type": "tel",
-          "required": true,
-          "variants": ["ENTE"],
-          "col": 6
-        },
-        {
-          "name": "rpf_email",
-          "label": "E-mail",
-          "type": "email",
-          "required": false,
-          "variants": ["ENTE"],
-          "validation": "email",
-          "col": 6
-        }
-      ]
-    },
-
     {
       "id": "sede",
       "title": "Sede e calendario",
@@ -435,7 +701,10 @@
           "label": "Sede svolgimento corso",
           "type": "text",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "placeholder": "Via e numero civico",
           "col": 12
         },
@@ -444,7 +713,10 @@
           "label": "Provincia / Comune / CAP",
           "type": "provinciaComuneCap",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -452,7 +724,10 @@
           "label": "Giorni e orari del corso",
           "type": "repeater",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "min": 1,
           "itemFields": [
             {
@@ -477,7 +752,6 @@
         }
       ]
     },
-
     {
       "id": "programma",
       "title": "Programma e verifiche",
@@ -488,7 +762,10 @@
           "label": "Programma esecutivo del corso",
           "type": "textarea",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "help": "Specificare nel dettaglio tutto il percorso formativo.",
           "rows": 8,
           "col": 12,
@@ -499,27 +776,32 @@
           "label": "Strumenti di verifica intermedi e/o finali",
           "type": "checkboxGroup",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "optionsRef": "strumentiVerifica",
           "min": 1,
           "col": 12
         }
       ]
     },
-
     {
       "id": "partecipanti",
       "title": "Partecipanti",
-      "description": "Massimo 25 lavoratori - indicare Nome, Cognome e Codice Fiscale",
+      "description": "Massimo 35 lavoratori - indicare Nome, Cognome e Codice Fiscale",
       "fields": [
         {
           "name": "partecipanti",
           "label": "Partecipanti al corso",
           "type": "partecipantiTable",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "min": 1,
-          "max": 25,
+          "max": 35,
           "pasteEnabled": true,
           "itemFields": [
             {
@@ -545,7 +827,6 @@
         }
       ]
     },
-
     {
       "id": "docenti",
       "title": "Formatore / docente",
@@ -556,7 +837,10 @@
           "label": "Nominativi dei docenti",
           "type": "docentiTable",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "min": 1,
           "max": 4,
           "itemFields": [
@@ -582,7 +866,6 @@
         }
       ]
     },
-
     {
       "id": "dichiarazioni",
       "title": "Dichiarazioni e privacy",
@@ -593,7 +876,10 @@
           "label": "Consapevole della responsabilità penale e delle sanzioni di cui agli artt. 75 e 76 del DPR 445/2000 in caso di dichiarazione mendace, e del fatto che, qualora emerga la non veridicità del contenuto delle dichiarazioni rese, la presente richiesta di collaborazione si riterrà automaticamente sospesa o revocata, fatto salvo ogni ulteriore profilo di responsabilità civile e penale e l'eventuale azione per il risarcimento dei danni, DICHIARA QUANTO SEGUE.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -601,7 +887,9 @@
           "label": "Il corso riguarderà lavoratori dell'azienda e operanti nel settore di attività ATECO F (Costruzioni).",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -609,7 +897,9 @@
           "label": "Il corso riguarderà lavoratori del settore ATECO F (Costruzioni).",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["ENTE"],
+          "variants": [
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -617,7 +907,9 @@
           "label": "Il Soggetto Formatore ha avuto specifico mandato dal/i datore/i di lavoro della/e impresa/e indicate.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["ENTE"],
+          "variants": [
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -625,7 +917,10 @@
           "label": "Il corso sarà organizzato ed erogato secondo quanto stabilito dall'Accordo Stato Regioni del 17/04/2025.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -633,7 +928,9 @@
           "label": "Il Soggetto Formatore ha i requisiti previsti dal Punto 1 della Parte I dell'ASR del 17/04/2025.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["ENTE"],
+          "variants": [
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -641,7 +938,10 @@
           "label": "I docenti sono in possesso dei requisiti di cui al Punto 2 della Parte I dell'ASR del 17/04/2025.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -649,7 +949,9 @@
           "label": "Il Responsabile del Progetto Formativo ha i requisiti richiesti dall'ASR del 17/04/2025.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["ENTE"],
+          "variants": [
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -657,7 +959,9 @@
           "label": "È stato verificato che gli eventuali partecipanti di origine straniera hanno una comprensione e conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate nello svolgimento del corso o, in alternativa, sarà assicurata la presenza di un interprete o di un mediatore culturale.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -665,7 +969,9 @@
           "label": "È stato verificato dal Soggetto Formatore e/o dal datore di lavoro dell'impresa che gli eventuali partecipanti di origine straniera hanno una comprensione e conoscenza della lingua italiana adeguata e sufficiente a seguire e comprendere le tematiche trattate nello svolgimento del corso o, in alternativa, sarà assicurata la presenza di un interprete o di un mediatore culturale.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["ENTE"],
+          "variants": [
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -673,7 +979,9 @@
           "label": "Tutti i partecipanti al corso sono lavoratori dell'azienda in oggetto.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -681,7 +989,9 @@
           "label": "Nel caso in cui il datore di lavoro abbia assunto anche la funzione di docente, è in possesso dei requisiti per lo svolgimento diretto dei compiti del servizio di prevenzione e protezione.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA"],
+          "variants": [
+            "IMPRESA"
+          ],
           "col": 12
         },
         {
@@ -689,15 +999,10 @@
           "label": "Si impegna, pena la decadenza della collaborazione in oggetto, a: trasmettere la presente richiesta almeno 15 gg prima dell'erogazione del corso; rispettare le eventuali indicazioni e suggerimenti erogati da FORMEDIL LECCE; informare tempestivamente FORMEDIL LECCE in caso di eventuali variazioni (annullamento del corso e/o variazioni di sede, orari o partecipanti); trasmettere, se richiesto da FORMEDIL LECCE ed entro 15 gg dalla richiesta, copia del registro delle presenze sottoscritto dai Docenti e dal Soggetto Formatore e copia delle risultanze delle verifiche intermedie e/o finali sottoscritte dal Responsabile del Progetto Formativo e dai valutatori.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
-          "col": 12
-        },
-        {
-          "name": "ack_organismo",
-          "label": "FORMEDIL LECCE è un Organismo Paritetico del settore delle Costruzioni (ATECO F).",
-          "type": "acknowledgment",
-          "required": true,
-          "variants": ["IMPRESA"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -705,7 +1010,10 @@
           "label": "Durante i giorni di erogazione del corso, FORMEDIL LECCE si riserva la facoltà di effettuare, senza necessità di preavviso, verifiche 'in loco' sul regolare svolgimento delle attività formative, per il tramite di personale appositamente incaricato. In caso di divieto o impossibilità di accesso, o qualora si accerti che anche una sola delle dichiarazioni rese non corrisponde, parzialmente o interamente, al vero, FORMEDIL LECCE si riserva la facoltà di revocare la collaborazione richiesta.",
           "type": "acknowledgment",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "col": 12
         },
         {
@@ -713,7 +1021,10 @@
           "label": "Eventuali note o comunicazioni",
           "type": "textarea",
           "required": false,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "rows": 4,
           "col": 12
         },
@@ -722,7 +1033,10 @@
           "label": "Sul sito www.formedillecce.it è presente l'informativa sulla privacy. Trattamento dei dati personali:",
           "type": "radio",
           "required": true,
-          "variants": ["IMPRESA", "ENTE"],
+          "variants": [
+            "IMPRESA",
+            "ENTE"
+          ],
           "optionsRef": "privacy",
           "col": 12
         }

@@ -66,6 +66,18 @@ final class RichiestaService
         $dati = is_array($row['dati'] ?? null) ? $row['dati'] : [];
 
         $denominazione = (string) ($dati['azienda_ragione_sociale'] ?? '');
+        if ($denominazione === '') {
+            // Variante ENTE: usa l'ente formatore + le imprese interessate.
+            $denominazione = (string) ($dati['org_ragione_sociale'] ?? '');
+            $imprese = is_array($dati['imprese'] ?? null) ? $dati['imprese'] : [];
+            $nomi = array_values(array_filter(array_map(
+                static fn($im) => is_array($im) ? trim((string) ($im['azienda_ragione_sociale'] ?? '')) : '',
+                $imprese
+            )));
+            if ($nomi !== []) {
+                $denominazione = ($denominazione !== '' ? $denominazione . ' — per: ' : 'per: ') . implode(', ', $nomi);
+            }
+        }
         $tipo = $dati['tipo_corso'] ?? '';
         $tipiCorso = (is_string($tipo) && $tipo !== '') ? [$tipo] : [];
 

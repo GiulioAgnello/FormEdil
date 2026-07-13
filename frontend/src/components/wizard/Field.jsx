@@ -9,13 +9,14 @@ import Repeater from './fields/Repeater';
 import ParticipantsTable from './fields/ParticipantsTable';
 import TeachersTable from './fields/TeachersTable';
 import ProvinciaComuneCap from './fields/ProvinciaComuneCap';
+import ImpreseRepeater from './fields/ImpreseRepeater';
 import { resolveOptions } from '@/utils/schema';
 
 /**
  * Smista un campo dello schema al componente giusto in base al type.
  * Aggiungere un nuovo tipo = aggiungere un case qui + il componente.
  */
-export default function Field({ schema, field, value, error, onChange }) {
+export default function Field({ schema, field, value, error, onChange, dati, variante }) {
   const common = { field, value, error, onChange };
 
   switch (field.type) {
@@ -34,8 +35,10 @@ export default function Field({ schema, field, value, error, onChange }) {
       return <Acknowledgment {...common} />;
     case 'repeater':
       return <Repeater {...common} />;
+    case 'impreseRepeater':
+      return <ImpreseRepeater {...common} schema={schema} />;
     case 'partecipantiTable':
-      return <ParticipantsTable {...common} />;
+      return <ParticipantsTable {...common} dati={dati} variante={variante} />;
     case 'docentiTable':
       return <TeachersTable {...common} />;
     case 'provinciaComuneCap':
