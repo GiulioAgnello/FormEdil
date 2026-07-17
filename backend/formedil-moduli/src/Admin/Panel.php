@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Formedil\Moduli\Admin;
 
 use Formedil\Moduli\Data\Repository;
+use Formedil\Moduli\Pdf\PdfGenerator;
 use Formedil\Moduli\Service\RichiestaService;
 use Formedil\Moduli\Storage\AllegatoStorage;
 use Formedil\Moduli\Support\Audit;
@@ -21,6 +22,7 @@ use Formedil\Moduli\Support\Token;
  */
 final class Panel
 {
+    // S12: download PDF generato da wp-admin.
     public const SLUG = 'formedil-richieste';
     public const CAP = 'manage_options';
     private const PER_PAGE = 20;
@@ -30,6 +32,7 @@ final class Panel
         add_action('admin_menu', [$this, 'menu']);
         add_action('admin_post_formedil_stato', [$this, 'handleStato']);
         add_action('admin_post_formedil_download', [$this, 'handleDownload']);
+        add_action('admin_post_formedil_download_pdf', [$this, 'handleDownloadPdf']);
     }
 
     public function menu(): void
@@ -183,6 +186,25 @@ final class Panel
         self::riga(__('Aggiornata', 'formedil'), self::formatData((string) ($det['updated_at'] ?? '')));
         echo '</tbody></table>';
 
+        // Modulo generato (PDF non firmato prodotto alla creazione).
+        echo '<h2>' . esc_html__('Modulo generato', 'formedil') . '</h2>';
+        $pdfFilename = 'richiesta-' . $token . '.pdf';
+        $pdfPath = PdfGenerator::path($pdfFilename);
+        if (is_file($pdfPath)) {
+            $pdfUrl = wp_nonce_url(
+                admin_url('admin-post.php?action=formedil_download_pdf&token=' . rawurlencode($token)),
+                'formedil_download_pdf_' . $token
+            );
+            echo '<table class="wp-list-table widefat fixed striped" style="max-width:640px;"><tbody>';
+            echo '<tr>';
+            echo '<td><strong>' . esc_html($pdfFilename) . '</strong><br><span class="description">' . esc_html(__('Modulo generato (non firmato)', 'formedil') . ' · ' . self::formatSize((int) filesize($pdfPath))) . '</span></td>';
+            echo '<td style="text-align:right;"><a class="button" href="' . esc_url($pdfUrl) . '">' . esc_html__('Scarica PDF', 'formedil') . '</a></td>';
+            echo '</tr>';
+            echo '</tbody></table>';
+        } else {
+            echo '<p class="description">' . esc_html__('Il PDF generato non è più disponibile su disco.', 'formedil') . '</p>';
+        }
+
         // Allegati.
         echo '<h2>' . esc_html__('Documenti caricati', 'formedil') . '</h2>';
         if ($allegati === []) {
@@ -317,6 +339,36 @@ final class Panel
         nocache_headers();
         header('Content-Type: ' . (string) ($allegato['mime'] ?? 'application/octet-stream'));
         header('Content-Disposition: attachment; filename="' . sanitize_file_name((string) ($allegato['original_name'] ?? basename($path))) . '"');
+        header('Content-Length: ' . (string) filesize($path));
+        readfile($path);
+        exit;
+    }
+
+    /**
+     * Scarica il PDF generato alla creazione (modulo non firmato), keyed by token.
+     */
+    public function handleDownloadPdf(): void
+    {
+        if (!current_user_can(self::CAP)) {
+            wp_die(esc_html__('Permesso negato.', 'formedil'));
+        }
+
+        $token = isset($_GET['token']) ? Token::normalize(sanitize_text_field(wp_unslash($_GET['token']))) : '';
+        check_admin_referer('formedil_download_pdf_' . $token);
+
+        if ($token === '' || Repository::findByToken($token) === null) {
+            wp_die(esc_html__('Richiesta non trovata.', 'formedil'));
+        }
+
+        $filename = 'richiesta-' . $token . '.pdf';
+        $path = PdfGenerator::path($filename);
+        if (!is_file($path)) {
+            wp_die(esc_html__('File mancante.', 'formedil'));
+        }
+
+        nocache_headers();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . sanitize_file_name($filename) . '"');
         header('Content-Length: ' . (string) filesize($path));
         readfile($path);
         exit;
