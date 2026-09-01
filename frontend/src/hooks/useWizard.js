@@ -3,6 +3,7 @@ import {
   stepsForVariant,
   activeFields,
   initialData,
+  applyFixedValues,
 } from '@/utils/schema';
 import { validateField } from '@/utils/validators';
 import { saveBozza, loadBozza } from '@/utils/storage';
@@ -17,7 +18,8 @@ export function useWizard(schema, variante) {
   const [dati, setDati] = useState(() => {
     const base = initialData(schema, variante);
     const bozza = loadBozza(variante);
-    return bozza ? { ...base, ...bozza } : base;
+    const merged = bozza ? { ...base, ...bozza } : base;
+    return applyFixedValues(schema, variante, merged);
   });
   const [stepIndex, setStepIndex] = useState(0);
   const [errors, setErrors] = useState({});

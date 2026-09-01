@@ -45,6 +45,7 @@ export function resolveOptions(schema, field) {
 
 /** Valore iniziale coerente col tipo di campo. */
 export function emptyValue(field) {
+  if (field.readOnly && field.fixedValue !== undefined) return field.fixedValue;
   switch (field.type) {
     case 'checkboxGroup':
       return [];
@@ -72,4 +73,38 @@ export function initialData(schema, variante) {
     }
   }
   return data;
+}
+
+/**
+ * Riallinea i campi readOnly+fixedValue (es. ATECO) al valore fisso dello
+ * schema, anche dentro le righe di un impreseRepeater. Serve perché una
+ * bozza salvata prima dell'introduzione di un campo fisso può ancora
+ * contenere un valore libero vecchio.
+ */
+export function applyFixedValues(schema, variante, dati) {
+  const next = { ...dati };
+  for (const step of stepsForVariant(schema, variante)) {
+    for (const field of step.fields || []) {
+      if (field.variants && !field.variants.includes(variante)) continue;
+      if (field.readOnly && field.fixedValue !== undefined) {
+        next[field.name] = field.fixedValue;
+        continue;
+      }
+      if (field.type === 'impreseRepeater' && Array.isArray(next[field.name])) {
+        const itemFields = field.itemFields || [];
+        next[field.name] = next[field.name].map((item) => {
+          let changed = false;
+          const patched = { ...item };
+          for (const f of itemFields) {
+            if (f.readOnly && f.fixedValue !== undefined && patched[f.name] !== f.fixedValue) {
+              patched[f.name] = f.fixedValue;
+              changed = true;
+            }
+          }
+          return changed ? patched : item;
+        });
+      }
+    }
+  }
+  return next;
 }

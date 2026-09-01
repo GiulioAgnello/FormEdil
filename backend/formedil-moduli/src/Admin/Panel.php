@@ -6,6 +6,7 @@ namespace Formedil\Moduli\Admin;
 
 use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Pdf\PdfGenerator;
+use Formedil\Moduli\Service\Mailer;
 use Formedil\Moduli\Service\RichiestaService;
 use Formedil\Moduli\Storage\AllegatoStorage;
 use Formedil\Moduli\Support\Audit;
@@ -33,6 +34,7 @@ final class Panel
         add_action('admin_post_formedil_stato', [$this, 'handleStato']);
         add_action('admin_post_formedil_download', [$this, 'handleDownload']);
         add_action('admin_post_formedil_download_pdf', [$this, 'handleDownloadPdf']);
+        add_action('admin_post_formedil_riscontro', [$this, 'handleRiscontro']);
     }
 
     public function menu(): void
@@ -56,6 +58,16 @@ final class Panel
 
         $token = isset($_GET['token']) ? Token::normalize(sanitize_text_field(wp_unslash($_GET['token']))) : '';
         if ($token !== '') {
+            // Passaggio intermedio del riscontro: si mostra l'anteprima del
+            // messaggio, senza scrivere nulla finché l'operatore non conferma.
+            $step = isset($_POST['formedil_step']) ? sanitize_key(wp_unslash($_POST['formedil_step'])) : '';
+            if ($step === 'anteprima' && check_admin_referer('formedil_riscontro_' . $token)) {
+                $row = Repository::findByToken($token);
+                if ($row !== null) {
+                    $this->renderAnteprima($row);
+                    return;
+                }
+            }
             $this->renderDetail($token);
             return;
         }
@@ -174,6 +186,16 @@ final class Panel
         if (isset($_GET['error'])) {
             echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Transizione di stato non consentita.', 'formedil') . '</p></div>';
         }
+        if (isset($_GET['riscontro'])) {
+            echo '<div class="notice notice-success is-dismissible"><p>'
+                . esc_html__('Riscontro inviato al richiedente e stato aggiornato.', 'formedil')
+                . '</p></div>';
+        }
+        if (isset($_GET['mail_error'])) {
+            echo '<div class="notice notice-error is-dismissible"><p>'
+                . esc_html__('Invio del riscontro non riuscito: lo stato non è stato modificato, puoi riprovare. Se il problema persiste controlla le impostazioni in WP Mail SMTP.', 'formedil')
+                . '</p></div>';
+        }
 
         // Anagrafica.
         echo '<h2>' . esc_html__('Anagrafica', 'formedil') . '</h2>';
@@ -231,6 +253,10 @@ final class Panel
         $transizioni = Status::transitions()[$stato] ?? [];
         if ($transizioni === []) {
             echo '<p class="description">' . esc_html__('Nessuna azione disponibile per questo stato.', 'formedil') . '</p>';
+        } elseif ($stato === Status::IN_VERIFICA) {
+            // Da "in verifica" si esce comunicando l'esito al richiedente: il
+            // cambio di stato e l'email di riscontro sono un'unica operazione.
+            self::formRiscontro($token, (array) ($row['dati'] ?? []));
         } else {
             foreach ($transizioni as $nuovo) {
                 echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:8px;">';
@@ -277,6 +303,256 @@ final class Panel
         }
 
         echo '</div>';
+    }
+
+    // -------------------------------------------------------------- RISCONTRO
+
+    /**
+     * Form di scelta dell'esito, mostrato quando la pratica è in verifica.
+     *
+     * Non invia nulla: porta alla schermata di anteprima, dove l'operatore
+     * rilegge il messaggio prima di spedirlo.
+     *
+     * @param array<string,mixed> $dati
+     */
+    private static function formRiscontro(string $token, array $dati): void
+    {
+        $destinatario = self::emailRichiedente($dati);
+
+        echo '<p class="description" style="max-width:640px;">'
+            . esc_html__('Per chiudere la pratica scegli l\'esito: al richiedente arriva l\'email di riscontro e lo stato viene aggiornato di conseguenza. Prima dell\'invio vedrai un\'anteprima del messaggio.', 'formedil')
+            . '</p>';
+
+        if ($destinatario === '') {
+            echo '<div class="notice notice-warning inline" style="margin:12px 0;padding:10px 14px;"><p>'
+                . esc_html__('Questa richiesta non contiene un indirizzo email: il riscontro non può essere inviato. Puoi comunque cambiare stato manualmente.', 'formedil')
+                . '</p></div>';
+        }
+
+        echo '<form method="post" action="' . esc_url(self::detailUrl($token)) . '">';
+        wp_nonce_field('formedil_riscontro_' . $token);
+        echo '<input type="hidden" name="formedil_step" value="anteprima" />';
+
+        echo '<table class="form-table" role="presentation"><tbody>';
+
+        echo '<tr><th scope="row">' . esc_html__('Esito', 'formedil') . '</th><td>';
+        $primo = true;
+        foreach (Mailer::esiti() as $valore => $label) {
+            echo '<label style="display:block;margin-bottom:8px;">';
+            echo '<input type="radio" name="esito" class="formedil-esito-radio" data-esito="' . esc_attr($valore)
+                . '" value="' . esc_attr($valore) . '" ' . checked($primo, true, false) . '> ';
+            echo esc_html($label);
+            echo '</label>';
+            $primo = false;
+        }
+        echo '<p class="description">' . esc_html__('Le due opzioni con indicazioni richiedono il testo qui sotto.', 'formedil') . '</p>';
+        echo '</td></tr>';
+
+        echo '<tr><th scope="row"><label for="formedil-indicazioni">' . esc_html__('Indicazioni o motivazione', 'formedil') . '</label></th><td>';
+        echo '<textarea id="formedil-indicazioni" name="indicazioni" rows="6" class="large-text code" placeholder="'
+            . esc_attr__('Testo che comparirà nell\'email, a capo come lo scrivi qui.', 'formedil') . '"></textarea>';
+        echo '<p class="description">'
+            . esc_html__('Obbligatorio se la richiesta è accolta con indicazioni oppure non accolta. Ignorato in caso di accettazione piena. Selezionando "Non accolta" viene proposto un testo base, modificabile.', 'formedil')
+            . '</p></td></tr>';
+
+        echo '</tbody></table>';
+
+        submit_button(__('Prepara il riscontro', 'formedil'), 'primary', 'submit', false);
+        echo '</form>';
+
+        self::scriptPrefillDiniego();
+    }
+
+    /**
+     * Precompila la textarea indicazioni con un testo base quando l'operatore
+     * seleziona l'esito "Non accolta" (solo se il campo è ancora vuoto, per
+     * non sovrascrivere un testo già scritto). Il testo resta liberamente
+     * modificabile prima dell'invio.
+     */
+    private static function scriptPrefillDiniego(): void
+    {
+        $testo = "Gentile datore di lavoro,\n"
+            . "A seguito dell'esame della documentazione inviata, dobbiamo informarVi che non ci è possibile accogliere la Vostra richiesta per le seguenti motivazioni:\n\n";
+        ?>
+        <script>
+        (function () {
+            var testo = <?php echo wp_json_encode($testo); ?>;
+            var esitoNonAccolta = <?php echo wp_json_encode(Mailer::ESITO_NON_ACCOLTA); ?>;
+            var area = document.getElementById('formedil-indicazioni');
+            if (!area) return;
+            var radios = document.querySelectorAll('.formedil-esito-radio');
+            radios.forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    if (radio.checked && radio.dataset.esito === esitoNonAccolta && area.value.trim() === '') {
+                        area.value = testo;
+                        area.focus();
+                        area.selectionStart = area.selectionEnd = area.value.length;
+                    }
+                });
+            });
+        })();
+        </script>
+        <?php
+    }
+
+    /**
+     * Schermata di anteprima: mostra il messaggio come lo riceverà il
+     * richiedente e chiede conferma. Nessuna modifica è ancora stata scritta.
+     *
+     * @param array<string,mixed> $row
+     */
+    private function renderAnteprima(array $row): void
+    {
+        $token = (string) ($row['token'] ?? '');
+        $dati = (array) ($row['dati'] ?? []);
+
+        $esito = isset($_POST['esito']) ? sanitize_text_field(wp_unslash($_POST['esito'])) : '';
+        $indicazioni = isset($_POST['indicazioni']) ? sanitize_textarea_field(wp_unslash($_POST['indicazioni'])) : '';
+
+        $etichette = Mailer::esiti();
+        $destinatario = self::emailRichiedente($dati);
+
+        echo '<div class="wrap">';
+        echo '<h1>' . esc_html__('Anteprima del riscontro', 'formedil') . '</h1>';
+
+        // Validazioni: si torna indietro senza aver toccato nulla.
+        $errore = '';
+        if (!isset($etichette[$esito])) {
+            $errore = __('Esito non riconosciuto.', 'formedil');
+        } elseif ($esito !== Mailer::ESITO_ACCETTATA && trim($indicazioni) === '') {
+            $errore = __('Per questo esito il testo delle indicazioni è obbligatorio.', 'formedil');
+        } elseif ($destinatario === '') {
+            $errore = __('La richiesta non contiene un indirizzo email a cui inviare il riscontro.', 'formedil');
+        }
+
+        if ($errore !== '') {
+            echo '<div class="notice notice-error"><p>' . esc_html($errore) . '</p></div>';
+            echo '<p><a class="button" href="' . esc_url(self::detailUrl($token)) . '">'
+                . esc_html__('Torna alla pratica', 'formedil') . '</a></p></div>';
+            return;
+        }
+
+        echo '<table class="wp-list-table widefat fixed striped" style="max-width:760px;margin-bottom:18px;"><tbody>';
+        self::riga(__('Pratica', 'formedil'), $token);
+        self::riga(__('Destinatario', 'formedil'), $destinatario);
+        self::riga(__('Esito scelto', 'formedil'), $etichette[$esito]);
+        self::riga(__('Nuovo stato', 'formedil'), self::statoLabel(self::statoPerEsito($esito)));
+        echo '</tbody></table>';
+
+        // Il corpo dell'email è HTML completo: va isolato per non interferire
+        // con lo stile di wp-admin.
+        echo '<h2>' . esc_html__('Messaggio', 'formedil') . '</h2>';
+        echo '<iframe title="' . esc_attr__('Anteprima email', 'formedil') . '" style="width:100%;max-width:760px;height:620px;border:1px solid #c3c4c7;background:#fff;" srcdoc="'
+            . esc_attr(Mailer::anteprimaRiscontro($dati, $token, $esito, $indicazioni))
+            . '"></iframe>';
+
+        echo '<p style="margin-top:20px;">';
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:10px;">';
+        echo '<input type="hidden" name="action" value="formedil_riscontro" />';
+        echo '<input type="hidden" name="token" value="' . esc_attr($token) . '" />';
+        echo '<input type="hidden" name="esito" value="' . esc_attr($esito) . '" />';
+        echo '<input type="hidden" name="indicazioni" value="' . esc_attr($indicazioni) . '" />';
+        wp_nonce_field('formedil_riscontro_invio_' . $token);
+        echo '<button type="submit" class="button button-primary">' . esc_html__('Invia il riscontro', 'formedil') . '</button>';
+        echo '</form>';
+        echo '<a class="button" href="' . esc_url(self::detailUrl($token)) . '">' . esc_html__('Torna indietro', 'formedil') . '</a>';
+        echo '</p>';
+
+        echo '</div>';
+    }
+
+    /**
+     * Invio definitivo: manda l'email, aggiorna lo stato e registra l'evento.
+     * Se l'email non parte lo stato non viene toccato, così l'operatore può
+     * riprovare senza che la pratica risulti chiusa senza comunicazione.
+     */
+    public function handleRiscontro(): void
+    {
+        if (!current_user_can(self::CAP)) {
+            wp_die(esc_html__('Permesso negato.', 'formedil'));
+        }
+
+        $token = isset($_POST['token']) ? Token::normalize(sanitize_text_field(wp_unslash($_POST['token']))) : '';
+        check_admin_referer('formedil_riscontro_invio_' . $token);
+
+        $esito = isset($_POST['esito']) ? sanitize_text_field(wp_unslash($_POST['esito'])) : '';
+        $indicazioni = isset($_POST['indicazioni']) ? sanitize_textarea_field(wp_unslash($_POST['indicazioni'])) : '';
+
+        $row = Repository::findByToken($token);
+        $detail = self::detailUrl($token);
+        $nuovo = self::statoPerEsito($esito);
+
+        if ($row === null || $nuovo === '' || !Status::canTransition((string) ($row['stato'] ?? ''), $nuovo)) {
+            wp_safe_redirect(add_query_arg('error', '1', $detail));
+            exit;
+        }
+
+        if ($esito !== Mailer::ESITO_ACCETTATA && trim($indicazioni) === '') {
+            wp_safe_redirect(add_query_arg('error', '1', $detail));
+            exit;
+        }
+
+        $dati = (array) ($row['dati'] ?? []);
+        if (!Mailer::riscontro($dati, $token, $esito, $indicazioni)) {
+            wp_safe_redirect(add_query_arg('mail_error', '1', $detail));
+            exit;
+        }
+
+        $precedente = (string) ($row['stato'] ?? '');
+        Repository::updateStato($token, $nuovo);
+
+        $etichette = Mailer::esiti();
+        $dettaglio = ($etichette[$esito] ?? $esito) . ' · ' . self::statoLabel($precedente) . ' → ' . self::statoLabel($nuovo);
+        if (trim($indicazioni) !== '') {
+            $dettaglio .= ' · ' . $indicazioni;
+        }
+
+        Audit::record((int) ($row['id'] ?? 0), $token, Audit::STATO_CAMBIATO, $dettaglio);
+
+        wp_safe_redirect(add_query_arg('riscontro', '1', $detail));
+        exit;
+    }
+
+    /** Stato in cui finisce la pratica per ciascun esito. */
+    private static function statoPerEsito(string $esito): string
+    {
+        switch ($esito) {
+            case Mailer::ESITO_ACCETTATA:
+            case Mailer::ESITO_CON_INDICAZIONI:
+                return Status::APPROVATA;
+            case Mailer::ESITO_NON_ACCOLTA:
+                return Status::RESPINTA;
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Email del richiedente, con gli stessi fallback usati dal Mailer.
+     *
+     * @param array<string,mixed> $dati
+     */
+    private static function emailRichiedente(array $dati): string
+    {
+        $to = trim((string) ($dati['azienda_email'] ?? ''));
+        if ($to === '') {
+            $to = trim((string) ($dati['org_email'] ?? ''));
+        }
+        if ($to === '') {
+            foreach ((array) ($dati['imprese'] ?? []) as $im) {
+                if (is_array($im) && trim((string) ($im['azienda_email'] ?? '')) !== '') {
+                    $to = trim((string) $im['azienda_email']);
+                    break;
+                }
+            }
+        }
+        return $to;
+    }
+
+    /** URL del dettaglio della pratica. */
+    private static function detailUrl(string $token): string
+    {
+        return admin_url('admin.php?page=' . self::SLUG . '&token=' . rawurlencode($token));
     }
 
     // ----------------------------------------------------------- AZIONI POST

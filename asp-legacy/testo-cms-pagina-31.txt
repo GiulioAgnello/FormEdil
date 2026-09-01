@@ -1,0 +1,62 @@
+TESTO PER IL CMS — pagina "Richiesta Collaborazione" (id_url 31)
+================================================================
+
+Nel pannello del sito, il contenuto di questa pagina è quello che sul sito
+compare sopra i pulsanti. Va sostituito SOLO l'ultima parte: quella che spiega
+come inviare la richiesta.
+
+----------------------------------------------------------------
+DA LASCIARE COM'È (primi due paragrafi, parte normativa)
+----------------------------------------------------------------
+
+In coerenza con l'art. 37, comma 12 del D.Lgs. 81/08 e la Parte II, punto 2 del
+nuovo Accordo Stato Regioni, i datori di lavoro che intendono organizzare
+direttamente la formazione per i propri lavoratori, preposti e dirigenti o
+effettuare la formazione tramite un Soggetto Formatore, devono preventivamente
+inviare una formale richiesta di collaborazione agli Organismi Paritetici
+istituiti ai sensi del D.M. 11 ottobre 2022, n. 171, ove presenti nel settore e
+nel territorio in cui si svolge l'attività del datore di lavoro.
+
+La richiesta deve essere inviata almeno quindici giorni prima dell'erogazione
+del corso.
+
+----------------------------------------------------------------
+DA SOSTITUIRE — testo attuale (quello che parla di email)
+----------------------------------------------------------------
+
+Per inviare la richiesta di collaborazione a FORMEDIL LECCE, organismo
+paritetico del settore delle costruzioni (Codice ATECO F) è necessario compilare
+il format sottostante, uno per ogni impresa interessata, stamparlo, firmarlo
+digitalmente e trasmetterlo al seguente indirizzo:
+responsabileareasicurezza@formedillecce.it.
+
+----------------------------------------------------------------
+NUOVO TESTO — da incollare al posto del precedente
+----------------------------------------------------------------
+
+Per inviare la richiesta di collaborazione a FORMEDIL LECCE, organismo paritetico
+del settore delle costruzioni (Codice ATECO F), è necessario compilare il modulo
+sul portale dedicato, utilizzando i pulsanti qui sotto.
+
+Al termine della compilazione il portale genera il PDF della richiesta. Il
+documento va firmato, a mano oppure con firma digitale, e ricaricato sul portale
+stesso: non è più necessario trasmetterlo via email.
+
+Il datore di lavoro che forma direttamente i propri lavoratori compila una
+richiesta per la propria impresa. Il soggetto formatore che opera per conto di
+più imprese può invece indicarle tutte in un'unica richiesta.
+
+----------------------------------------------------------------
+DA LASCIARE COM'È (parte finale)
+----------------------------------------------------------------
+
+Qualora FORMEDIL LECCE riscontri la necessità di fornire indicazioni, le stesse
+saranno richieste formalmente al richiedente e questi ne deve tenere conto nella
+pianificazione del corso.
+
+Ove la richiesta non riceva riscontro entro 15 giorni dal suo invio, il datore di
+lavoro può procedere autonomamente alla pianificazione e alla realizzazione
+dell'attività formativa.
+
+Referente del processo: Geom. Giancarlo Giannone - Tel. 0832 332095 -
+responsabileareasicurezza@formedillecce.it

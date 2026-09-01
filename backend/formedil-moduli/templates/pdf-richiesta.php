@@ -352,7 +352,8 @@ salute e sicurezza (riferimento normativo: <?= Html::val($d('riferimento_normati
         <span class="token-code"><?= Html::esc($token) ?></span><br>
         <span class="small muted">
           Conserva questo codice. Dopo aver firmato digitalmente il PDF, vai su
-          <?= Html::esc(parse_url($invioUrl, PHP_URL_HOST) ?: 'moduli.formedillecce.it') ?>
+          <?php /* Fallback solo se $invioUrl non è parsabile: dominio di produzione della SPA. */ ?>
+          <?= Html::esc(parse_url($invioUrl, PHP_URL_HOST) ?: 'gestionale.formedillecce.it') ?>
           → "Invia documentazione" e inserisci il codice per caricare il modulo firmato e gli allegati.
         </span>
       </td>

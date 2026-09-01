@@ -26,6 +26,12 @@ final class RestController
 {
     private const NS = FORMEDIL_REST_NAMESPACE;
 
+    /**
+     * Dominio di produzione della SPA React (radice, senza /cms).
+     * Usato nei link di invio: email, testo del PDF e QR code.
+     */
+    public const DEFAULT_FRONTEND_URL = 'https://gestionale.formedillecce.it';
+
     public function registerRoutes(): void
     {
         register_rest_route(self::NS, '/health', [
@@ -274,10 +280,19 @@ final class RestController
         return $resp;
     }
 
-    /** Base URL del frontend SPA (per i link di invio). Configurabile via filtro. */
+    /**
+     * Base URL del frontend SPA (per i link di invio: email, PDF e QR code).
+     *
+     * Deve puntare alla RADICE del dominio dove è pubblicata la SPA React, non a
+     * /cms (dove sta WordPress). In produzione la SPA è servita da
+     * https://gestionale.formedillecce.it/ e WordPress da .../cms.
+     *
+     * Override in altri ambienti (es. locale) via filtro `formedil_frontend_base_url`:
+     *   add_filter('formedil_frontend_base_url', fn () => 'http://formedillocal.local');
+     */
     private function frontendBaseUrl(): string
     {
-        $default = 'https://moduli.formedillecce.it';
+        $default = self::DEFAULT_FRONTEND_URL;
         return (string) apply_filters('formedil_frontend_base_url', $default);
     }
 }

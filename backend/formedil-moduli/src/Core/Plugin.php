@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Formedil\Moduli\Core;
 
 use Formedil\Moduli\Admin\Panel;
+use Formedil\Moduli\Admin\SettingsPage;
 use Formedil\Moduli\Rest\RestController;
 
 /**
@@ -24,5 +25,11 @@ final class Plugin
         // Gestionale dentro wp-admin (autenticazione e permessi di WordPress).
         $panel = new Panel();
         $panel->register();
+
+        // Impostazioni email: sottomenu del gestionale. Registra anche i filtri
+        // che alimentano il Mailer, quindi va agganciata sempre, non solo in
+        // wp-admin: le notifiche partono anche da richieste fatte dal sito.
+        $settings = new SettingsPage();
+        $settings->register();
     }
 }

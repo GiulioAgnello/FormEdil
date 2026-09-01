@@ -42,7 +42,7 @@ $dati = $payload['dati'] ?? [];
 
 $schema   = SchemaProvider::get();
 $token    = 'FME-ANTE-PRIM-A001';
-$invioUrl = 'https://moduli.formedillecce.it/invio/' . $token;
+$invioUrl = 'https://gestionale.formedillecce.it/invio/' . $token;
 // Path relativo al logo, così il browser lo mostra aprendo preview.html.
 $logoSrc  = '../formedil-moduli/templates/assets/logo.jpg';
 

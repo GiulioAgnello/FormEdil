@@ -65,14 +65,19 @@ final class InvioService
         $richiestaId = (int) ($row['id'] ?? 0);
 
         // Salvataggio: prima il firmato, poi gli allegati.
+        // Si tiene traccia dei file salvati (con il percorso su disco) per
+        // allegarli alla notifica interna senza rileggerli dal database.
+        $salvati = [];
         try {
             $stored = AllegatoStorage::store($token, $firmato, 'FIRMATO');
             Repository::insertAllegato($richiestaId, $stored + ['tipo' => 'FIRMATO']);
+            $salvati[] = self::descrivi($token, $stored, 'FIRMATO');
 
             $count = 1;
             foreach ($allegati as $file) {
                 $a = AllegatoStorage::store($token, $file, 'ALLEGATO');
                 Repository::insertAllegato($richiestaId, $a + ['tipo' => 'ALLEGATO']);
+                $salvati[] = self::descrivi($token, $a, 'ALLEGATO');
                 $count++;
             }
         } catch (\Throwable $e) {
@@ -82,14 +87,46 @@ final class InvioService
         Repository::updateStato($token, Status::FIRMATA_CARICATA);
         Audit::record($richiestaId, $token, Audit::INVIO_RICEVUTO, $count . ' file caricati');
 
-        // Conferma "documenti firmati ricevuti" al richiedente (non bloccante).
         $dati = is_array($row['dati'] ?? null) ? $row['dati'] : [];
+
+        // 1. Conferma di ricezione al richiedente (non bloccante).
         Mailer::documentiRicevuti($dati, $token);
+
+        // 2. Notifica alle caselle FORMEDIL con i documenti allegati.
+        Mailer::documentiPerVerifica($dati, $token, $salvati, self::dettaglioUrl($token));
 
         return [
             'ok'        => true,
             'stato'     => Status::FIRMATA_CARICATA,
             'allegati'  => $count,
         ];
+    }
+
+    /**
+     * Riduce il risultato di AllegatoStorage::store a quel che serve al Mailer:
+     * tipo, nome mostrato all'utente e percorso su disco.
+     *
+     * @param array<string,mixed> $stored
+     * @return array<string,mixed>
+     */
+    private static function descrivi(string $token, array $stored, string $tipo): array
+    {
+        $filename = (string) ($stored['filename'] ?? '');
+
+        return [
+            'tipo'          => $tipo,
+            'original_name' => (string) ($stored['original_name'] ?? $filename),
+            'path'          => $filename !== '' ? AllegatoStorage::path($token, $filename) : '',
+        ];
+    }
+
+    /** Link al dettaglio della pratica nel pannello wp-admin. */
+    private static function dettaglioUrl(string $token): string
+    {
+        if (!function_exists('admin_url')) {
+            return '';
+        }
+
+        return admin_url('admin.php?page=formedil-richieste&token=' . rawurlencode($token));
     }
 }

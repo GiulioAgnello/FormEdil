@@ -5,13 +5,13 @@
     "destinatario": "FORMEDIL LECCE - Via Belgio, 73100 Lecce",
     "oggetto": "Richiesta collaborazione - Art. 37 comma 12 D.Lgs 81/2008 s.m.i. - Accordo Stato Regioni del 17/04/2025",
     "privacyUrl": "https://www.formedillecce.it",
-    "maxPartecipanti": 25,
+    "maxPartecipanti": 30,
     "maxDocenti": 4
   },
   "variants": {
     "IMPRESA": {
       "label": "Impresa edile",
-      "subtitle": "Compila il modulo per attivare un corso per i tuoi dipendenti",
+      "subtitle": "Compila il modulo per richiedere la collaborazione per la formazione dei tuoi lavoratori",
       "firme": [
         "Soggetto Formatore (impresa edile)"
       ],
@@ -21,7 +21,7 @@
     },
     "ENTE": {
       "label": "Ente di formazione",
-      "subtitle": "Richiedi una collaborazione per attivare un corso attraverso il tuo Ente di Formazione",
+      "subtitle": "Compila il modulo per richiedere la collaborazione per conto dell'impresa",
       "firme": [
         "Soggetto Formatore che eroga il corso",
         "Impresa"
@@ -411,7 +411,8 @@
               "label": "Codice ATECO (Accordo Stato Regioni del 17/04/2025)",
               "type": "text",
               "required": true,
-              "placeholder": "F (Costruzioni)",
+              "readOnly": true,
+              "fixedValue": "F (Costruzioni)",
               "col": 12
             }
           ]
@@ -602,7 +603,8 @@
           "variants": [
             "IMPRESA"
           ],
-          "placeholder": "F (Costruzioni)",
+          "readOnly": true,
+          "fixedValue": "F (Costruzioni)",
           "col": 12
         }
       ],
@@ -789,7 +791,7 @@
     {
       "id": "partecipanti",
       "title": "Partecipanti",
-      "description": "Massimo 35 lavoratori - indicare Nome, Cognome e Codice Fiscale",
+      "description": "Massimo 30 lavoratori - indicare Nome, Cognome e Codice Fiscale",
       "fields": [
         {
           "name": "partecipanti",
@@ -801,7 +803,7 @@
             "ENTE"
           ],
           "min": 1,
-          "max": 35,
+          "max": 30,
           "pasteEnabled": true,
           "itemFields": [
             {
