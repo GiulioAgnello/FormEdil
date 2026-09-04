@@ -1,15 +1,50 @@
 .app-header {
-  background: var(--color-bg);
-  border-bottom: 3px solid var(--brand-primary);
   box-shadow: var(--shadow-sm);
 }
-.app-header__inner {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+
+/* Barra superiore scura con i contatti (come sito principale) */
+.app-header__topbar {
+  background: var(--brand-graphite);
+}
+.app-header__topbar-inner {
+  width: 100%;
+  padding: var(--space-2) var(--space-6);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+.app-header__contact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  opacity: 0.9;
+}
+.app-header__contact:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+.app-header__icon {
+  width: 14px;
+  height: 14px;
+  fill: var(--brand-primary);
+  flex-shrink: 0;
+}
+
+/* Riga principale: logo + nav interna */
+.app-header__inner {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 3px solid var(--brand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 .app-header__brand {
   display: inline-flex;
@@ -21,25 +56,41 @@
   text-decoration: none;
 }
 .app-header__logo-img {
-  height: 80px;
+  height: 64px;
   width: auto;
   display: block;
 }
-.app-header__sub {
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+.app-header__nav-link {
   font-family: var(--font-heading);
   font-size: var(--fs-sm);
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-  padding-left: var(--space-3);
-  border-left: 1px solid var(--color-border);
+  color: var(--brand-graphite);
+  padding: var(--space-2) 0;
+  border-bottom: 2px solid transparent;
+}
+.app-header__nav-link:hover {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+.app-header__nav-link--active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
 }
 
 @media (max-width: 520px) {
   .app-header__logo-img {
-    height: 36px;
+    height: 40px;
   }
-  .app-header__sub {
-    display: none;
+  .app-header__topbar-inner {
+    gap: var(--space-3);
+  }
+  .app-header__contact {
+    font-size: 0.7rem;
   }
 }

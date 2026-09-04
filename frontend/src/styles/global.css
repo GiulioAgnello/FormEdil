@@ -8,9 +8,23 @@
 }
 
 html,
-body {
+body,
+#root {
   margin: 0;
   padding: 0;
+  height: 100%;
+}
+
+/* Sticky footer: main si espande, il footer resta in fondo alla viewport
+   quando il contenuto della pagina è più basso dello schermo. */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.app-shell__main {
+  flex: 1 0 auto;
+  width: 100%;
 }
 
 body {
@@ -26,7 +40,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: lato, sans-serif;
+  font-family: var(--font-heading);
   font-weight: 600;
   letter-spacing: 0.01em;
   margin: 0 0 var(--space-3);
@@ -62,6 +76,24 @@ a:hover {
   padding: var(--space-6) var(--space-4);
 }
 
+/* Badge/etichetta a pillola (stile sito principale: badge scuro maiuscolo) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--brand-graphite);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+}
+.badge--primary {
+  background: var(--brand-primary);
+}
+
 /* Bottoni riutilizzabili */
 .btn {
   display: inline-flex;
@@ -72,7 +104,7 @@ a:hover {
   font-size: var(--fs-base);
   font-weight: 600;
   padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-btn);
   border: 1px solid transparent;
   cursor: pointer;
   transition:
@@ -93,6 +125,15 @@ a:hover {
   text-decoration: none;
 }
 
+.btn--dark {
+  background: var(--brand-graphite);
+  color: #fff;
+}
+.btn--dark:hover {
+  background: var(--brand-graphite-dark);
+  text-decoration: none;
+}
+
 .btn--ghost {
   background: transparent;
   color: var(--brand-primary);
@@ -101,6 +142,10 @@ a:hover {
 .btn--ghost:hover {
   background: var(--brand-primary-light);
   text-decoration: none;
+}
+
+.btn--pill {
+  border-radius: var(--radius-pill);
 }
 
 .card {
