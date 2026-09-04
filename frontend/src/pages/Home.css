@@ -82,7 +82,7 @@
   padding: var(--space-4) var(--space-5) 0;
   color: var(--color-text-muted);
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  line-height: 1.667; /* 25px a 15px */
 }
 .variant-choice__btn {
   display: block;
@@ -96,7 +96,7 @@
   color: #fff;
   background: var(--brand-primary);
   border: none;
-  border-radius: var(--radius-btn);
+  border-radius: 0;
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
   transition:
