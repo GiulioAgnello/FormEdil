@@ -88,7 +88,7 @@
   display: block;
   width: auto;
   margin: var(--space-5) var(--space-4) var(--space-4);
-  margin-top: 15px;
+  margin-top: auto; /* ancora il bottone in fondo, indipendentemente dalla lunghezza del testo sopra */
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: var(--fs-base);
