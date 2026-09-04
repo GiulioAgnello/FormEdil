@@ -42,7 +42,13 @@ export default function AppFooter() {
       </div>
 
       <div className="app-footer__bottom">
-        © {anno} FORMEDIL Lecce — Ente Unico Formazione e Sicurezza
+        © {anno} FORMEDIL Lecce — Ente Unico Formazione e Sicurezza - powered by{" "}
+        <a
+          className="app-footer__bottom-link"
+          href="https://www.media-aptitude.it/"
+        >
+          Media-Aptitude
+        </a>
       </div>
     </footer>
   );

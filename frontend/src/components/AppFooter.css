@@ -54,3 +54,9 @@
   font-weight: 600;
   color: #fff;
 }
+
+.app-footer__bottom-link {
+  color: #fff;
+  font-weight: 600;
+  font-size: var(--fs-xs);
+}
