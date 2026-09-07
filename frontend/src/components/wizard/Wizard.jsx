@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWizard } from '@/hooks/useWizard';
+import { useSetWizardStep } from '@/context/WizardStepContext';
 import Stepper from './Stepper';
 import Field from './Field';
 
@@ -13,6 +14,18 @@ export default function Wizard({ schema, variante, onSubmit }) {
   const [maxReached, setMaxReached] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [serverMsg, setServerMsg] = useState('');
+  const setWizardStep = useSetWizardStep();
+
+  // Pubblica lo step corrente per il pulsante WhatsApp (messaggio con contesto).
+  useEffect(() => {
+    setWizardStep({
+      stepIndex: w.stepIndex,
+      totalSteps: w.steps.length,
+      stepTitle: w.currentStep?.title,
+      variante,
+    });
+    return () => setWizardStep(null);
+  }, [setWizardStep, w.stepIndex, w.steps.length, w.currentStep, variante]);
 
   const goNext = () => {
     if (w.next()) {

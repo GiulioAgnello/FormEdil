@@ -1,0 +1,40 @@
+/* Icona WhatsApp verde "ad anello" (fumetto + cornetta), senza badge di sfondo:
+   esattamente come da riferimento del PM. Ombra portata (drop-shadow, segue
+   la sagoma dell'icona) per staccarla dalla pagina. */
+.whatsapp-btn {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-whatsapp);
+  filter: drop-shadow(0 6px 14px rgba(16, 30, 54, 0.28));
+  text-decoration: none;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.whatsapp-btn:hover,
+.whatsapp-btn:focus-visible {
+  color: var(--color-whatsapp-dark);
+  transform: scale(1.06);
+}
+
+.whatsapp-btn__icon {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+@media (max-width: 600px) {
+  .whatsapp-btn {
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+
+  .whatsapp-btn__icon {
+    width: 48px;
+    height: 48px;
+  }
+}

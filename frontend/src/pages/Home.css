@@ -79,7 +79,7 @@
 }
 .variant-choice__subtitle {
   margin: 0;
-  padding: var(--space-4) var(--space-5) 0;
+  padding: 25px;
   color: var(--color-text-muted);
   font-size: var(--fs-sm);
   line-height: 1.667; /* 25px a 15px */

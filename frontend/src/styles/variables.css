@@ -19,6 +19,10 @@
   --brand-yellow: #ffd500;           /* CTA scelta soggetto (sfondo giallo, testo nero) */
   --brand-yellow-dark: #e6c000;
 
+  /* --- WhatsApp (pulsante di assistenza flottante) --- */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #1da851;
+
   /* --- Tipografia (allineata al sito principale: Poppins + Open Sans) --- */
   --font-heading: 'Poppins', system-ui, sans-serif;
   --font-body: 'Open Sans', system-ui, sans-serif;

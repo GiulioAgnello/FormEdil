@@ -15,8 +15,8 @@ export default function AppFooter() {
             alt="FORMEDIL Lecce — Ente Unico Formazione e Sicurezza"
           />
           <p className="app-footer__text">
-            Ente Unico Formazione e Sicurezza in Edilizia — Via Belgio, 73100
-            Lecce.
+            Ente Unico Formazione e Sicurezza in Edilizia — Viale Belgio - zona
+            industriale, 73100 Lecce.
           </p>
         </div>
 
@@ -24,6 +24,9 @@ export default function AppFooter() {
           <span className="app-footer__heading">Contatti</span>
           <a className="app-footer__link" href="tel:+390832332095">
             +39 0832 332095
+          </a>
+          <a className="app-footer__link" href="cell:+393426707519">
+            +39 342 6707519
           </a>
           <a className="app-footer__link" href="mailto:info@formedillecce.it">
             info@formedillecce.it
