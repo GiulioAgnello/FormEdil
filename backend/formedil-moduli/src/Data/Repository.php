@@ -16,6 +16,16 @@ final class Repository
     private const TABLE_ALLEGATI = 'formedil_allegati';
     private const TABLE_AUDIT = 'formedil_audit';
 
+    /**
+     * Versione dello schema. Va incrementata ogni volta che createTable()
+     * cambia (nuove colonne/indici): ensureSchema() confronta questo valore
+     * con quello salvato in un option e rilancia dbDelta() se differiscono,
+     * così le installazioni già attive si aggiornano da sole al prossimo
+     * caricamento del plugin, senza bisogno di disattivare/riattivare.
+     */
+    private const SCHEMA_VERSION = '2';
+    private const SCHEMA_VERSION_OPTION = 'formedil_db_schema_version';
+
     private static function table(): string
     {
         global $wpdb;
@@ -49,11 +59,13 @@ final class Repository
             stato VARCHAR(32) NOT NULL DEFAULT 'GENERATA',
             dati LONGTEXT NOT NULL,
             pdf_filename VARCHAR(255) NULL,
+            archiviata TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             PRIMARY KEY  (id),
             UNIQUE KEY token (token),
-            KEY stato (stato)
+            KEY stato (stato),
+            KEY archiviata (archiviata)
         ) {$charset};";
 
         // Allegati caricati dall'utente in fase di invio (PDF firmato + extra).
@@ -89,6 +101,23 @@ final class Repository
         dbDelta($sql);
         dbDelta($sqlAllegati);
         dbDelta($sqlAudit);
+
+        update_option(self::SCHEMA_VERSION_OPTION, self::SCHEMA_VERSION);
+    }
+
+    /**
+     * Allinea lo schema del database se necessario. Va chiamata ad ogni
+     * caricamento del plugin (è economica: nella quasi totalità dei casi si
+     * riduce a un confronto tra stringhe via get_option). Permette di
+     * aggiungere colonne/indici a installazioni già in produzione senza dover
+     * disattivare e riattivare il plugin.
+     */
+    public static function ensureSchema(): void
+    {
+        if (get_option(self::SCHEMA_VERSION_OPTION) === self::SCHEMA_VERSION) {
+            return;
+        }
+        self::createTable();
     }
 
     /**
@@ -246,20 +275,56 @@ final class Repository
     /**
      * Costruisce WHERE + parametri condivisi da list() e count().
      *
+     * Filtri accettati (tutti opzionali, chiavi assenti = nessun filtro):
+     *   - stato            (string)  match esatto
+     *   - search           (string)  cerca nel token oppure nei dati (denominazione e affini)
+     *   - variante         (string)  match esatto (IMPRESA|ENTE)
+     *   - dal / al         (string)  intervallo su created_at, formato Y-m-d
+     *   - mostra_archiviate(bool)    se falso (default) nasconde le pratiche archiviate
+     *
+     * @param array<string,mixed> $filtri
      * @return array{0:string,1:array<int,mixed>}
      */
-    private static function buildWhere(string $stato, string $search): array
+    private static function buildWhere(array $filtri): array
     {
+        global $wpdb;
         $where = [];
         $params = [];
 
+        $stato = (string) ($filtri['stato'] ?? '');
         if ($stato !== '') {
             $where[] = 'stato = %s';
             $params[] = $stato;
         }
+
+        $search = (string) ($filtri['search'] ?? '');
         if ($search !== '') {
-            $where[] = 'token LIKE %s';
-            $params[] = '%' . $GLOBALS['wpdb']->esc_like($search) . '%';
+            $like = '%' . $wpdb->esc_like($search) . '%';
+            $where[] = '(token LIKE %s OR dati LIKE %s)';
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $variante = (string) ($filtri['variante'] ?? '');
+        if ($variante !== '') {
+            $where[] = 'variante = %s';
+            $params[] = $variante;
+        }
+
+        $dal = (string) ($filtri['dal'] ?? '');
+        if ($dal !== '') {
+            $where[] = 'created_at >= %s';
+            $params[] = $dal . ' 00:00:00';
+        }
+
+        $al = (string) ($filtri['al'] ?? '');
+        if ($al !== '') {
+            $where[] = 'created_at <= %s';
+            $params[] = $al . ' 23:59:59';
+        }
+
+        if (empty($filtri['mostra_archiviate'])) {
+            $where[] = 'archiviata = 0';
         }
 
         $sql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
@@ -269,12 +334,13 @@ final class Repository
     /**
      * Lista paginata per il pannello admin (con filtri).
      *
+     * @param array<string,mixed> $filtri vedi buildWhere()
      * @return array<int,array<string,mixed>> Righe con 'dati' decodificato.
      */
-    public static function list(string $stato = '', string $search = '', int $limit = 20, int $offset = 0): array
+    public static function list(array $filtri, int $limit = 20, int $offset = 0): array
     {
         global $wpdb;
-        [$whereSql, $params] = self::buildWhere($stato, $search);
+        [$whereSql, $params] = self::buildWhere($filtri);
 
         $sql = 'SELECT * FROM ' . self::table() . $whereSql
             . ' ORDER BY created_at DESC LIMIT %d OFFSET %d';
@@ -294,11 +360,15 @@ final class Repository
         return $rows;
     }
 
-    /** Conteggio totale per la paginazione. */
-    public static function count(string $stato = '', string $search = ''): int
+    /**
+     * Conteggio totale per la paginazione.
+     *
+     * @param array<string,mixed> $filtri vedi buildWhere()
+     */
+    public static function count(array $filtri): int
     {
         global $wpdb;
-        [$whereSql, $params] = self::buildWhere($stato, $search);
+        [$whereSql, $params] = self::buildWhere($filtri);
 
         $sql = 'SELECT COUNT(*) FROM ' . self::table() . $whereSql;
         $total = $params === []
@@ -306,6 +376,24 @@ final class Repository
             : $wpdb->get_var($wpdb->prepare($sql, $params));
 
         return (int) $total;
+    }
+
+    /**
+     * Archivia o ripristina una pratica. Azione indipendente dal ciclo di
+     * vita (stato): serve solo a toglierla dalla vista principale del
+     * pannello, non tocca GENERATA/APPROVATA/ecc.
+     */
+    public static function updateArchiviata(string $token, bool $archiviata): bool
+    {
+        global $wpdb;
+        $res = $wpdb->update(
+            self::table(),
+            ['archiviata' => $archiviata ? 1 : 0, 'updated_at' => gmdate('Y-m-d H:i:s')],
+            ['token' => $token],
+            ['%d', '%s'],
+            ['%s']
+        );
+        return $res !== false;
     }
 
     // ------------------------------------------------------------------ AUDIT

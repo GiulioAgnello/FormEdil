@@ -28,6 +28,12 @@ final class Panel
     public const CAP = 'manage_options';
     private const PER_PAGE = 20;
 
+    /** Etichette leggibili delle varianti, usate nei filtri e nella lista. */
+    private const VARIANTE_LABEL = [
+        'IMPRESA' => 'Impresa',
+        'ENTE'    => 'Ente',
+    ];
+
     public function register(): void
     {
         add_action('admin_menu', [$this, 'menu']);
@@ -35,6 +41,7 @@ final class Panel
         add_action('admin_post_formedil_download', [$this, 'handleDownload']);
         add_action('admin_post_formedil_download_pdf', [$this, 'handleDownloadPdf']);
         add_action('admin_post_formedil_riscontro', [$this, 'handleRiscontro']);
+        add_action('admin_post_formedil_archivia', [$this, 'handleArchivia']);
     }
 
     public function menu(): void
@@ -82,12 +89,28 @@ final class Panel
         if ($stato !== '' && !Status::isValid($stato)) {
             $stato = '';
         }
-        $q = isset($_GET['q']) ? Token::normalize(sanitize_text_field(wp_unslash($_GET['q']))) : '';
+        $q = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+        $variante = isset($_GET['variante']) ? sanitize_text_field(wp_unslash($_GET['variante'])) : '';
+        if (!in_array($variante, ['IMPRESA', 'ENTE'], true)) {
+            $variante = '';
+        }
+        $dal = isset($_GET['dal']) ? sanitize_text_field(wp_unslash($_GET['dal'])) : '';
+        $al = isset($_GET['al']) ? sanitize_text_field(wp_unslash($_GET['al'])) : '';
+        $mostraArchiviate = !empty($_GET['mostra_archiviate']);
         $paged = isset($_GET['paged']) ? max(1, (int) $_GET['paged']) : 1;
         $offset = ($paged - 1) * self::PER_PAGE;
 
-        $rows = Repository::list($stato, $q, self::PER_PAGE, $offset);
-        $total = Repository::count($stato, $q);
+        $filtri = [
+            'stato'             => $stato,
+            'search'            => $q,
+            'variante'          => $variante,
+            'dal'               => $dal,
+            'al'                => $al,
+            'mostra_archiviate' => $mostraArchiviate,
+        ];
+
+        $rows = Repository::list($filtri, self::PER_PAGE, $offset);
+        $total = Repository::count($filtri);
         $pages = (int) ceil($total / self::PER_PAGE);
         $service = new RichiestaService();
 
@@ -95,7 +118,7 @@ final class Panel
         echo '<h1>' . esc_html__('Richieste di collaborazione', 'formedil') . '</h1>';
 
         // Filtri (GET).
-        echo '<form method="get" style="margin:16px 0;">';
+        echo '<form method="get" style="margin:16px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">';
         echo '<input type="hidden" name="page" value="' . esc_attr(self::SLUG) . '" />';
         echo '<select name="stato">';
         echo '<option value="">' . esc_html__('Tutti gli stati', 'formedil') . '</option>';
@@ -107,9 +130,31 @@ final class Panel
                 esc_html(self::statoLabel($s))
             );
         }
-        echo '</select> ';
-        echo '<input type="search" name="q" value="' . esc_attr($q) . '" placeholder="' . esc_attr__('Cerca per token…', 'formedil') . '" /> ';
+        echo '</select>';
+        echo '<select name="variante">';
+        echo '<option value="">' . esc_html__('Tutte le varianti', 'formedil') . '</option>';
+        foreach (self::VARIANTE_LABEL as $v => $label) {
+            printf(
+                '<option value="%s"%s>%s</option>',
+                esc_attr($v),
+                selected($variante, $v, false),
+                esc_html($label)
+            );
+        }
+        echo '</select>';
+        echo '<input type="search" name="q" value="' . esc_attr($q) . '" placeholder="' . esc_attr__('Cerca per token o denominazione…', 'formedil') . '" style="min-width:220px;" />';
+        echo '<label style="display:flex;align-items:center;gap:4px;">' . esc_html__('Dal', 'formedil')
+            . ' <input type="date" name="dal" value="' . esc_attr($dal) . '" /></label>';
+        echo '<label style="display:flex;align-items:center;gap:4px;">' . esc_html__('Al', 'formedil')
+            . ' <input type="date" name="al" value="' . esc_attr($al) . '" /></label>';
+        echo '<label style="display:flex;align-items:center;gap:4px;">';
+        echo '<input type="checkbox" name="mostra_archiviate" value="1"' . checked($mostraArchiviate, true, false) . ' /> ';
+        echo esc_html__('Mostra anche le archiviate', 'formedil');
+        echo '</label>';
         submit_button(__('Filtra', 'formedil'), 'secondary', '', false);
+        if ($stato !== '' || $q !== '' || $variante !== '' || $dal !== '' || $al !== '' || $mostraArchiviate) {
+            echo ' <a class="button" href="' . esc_url(admin_url('admin.php?page=' . self::SLUG)) . '">' . esc_html__('Azzera filtri', 'formedil') . '</a>';
+        }
         echo '</form>';
 
         echo '<table class="wp-list-table widefat fixed striped">';
@@ -119,10 +164,11 @@ final class Panel
         echo '<th>' . esc_html__('Denominazione', 'formedil') . '</th>';
         echo '<th>' . esc_html__('Stato', 'formedil') . '</th>';
         echo '<th>' . esc_html__('Creata', 'formedil') . '</th>';
+        echo '<th>' . esc_html__('Archiviazione', 'formedil') . '</th>';
         echo '</tr></thead><tbody>';
 
         if ($rows === []) {
-            echo '<tr><td colspan="5">' . esc_html__('Nessuna richiesta trovata.', 'formedil') . '</td></tr>';
+            echo '<tr><td colspan="6">' . esc_html__('Nessuna richiesta trovata.', 'formedil') . '</td></tr>';
         }
 
         foreach ($rows as $row) {
@@ -131,12 +177,13 @@ final class Panel
                 ['page' => self::SLUG, 'token' => $r['token']],
                 admin_url('admin.php')
             );
-            echo '<tr>';
+            echo '<tr' . (!empty($r['archiviata']) ? ' style="opacity:.65;"' : '') . '>';
             echo '<td><a href="' . esc_url($detailUrl) . '"><strong>' . esc_html($r['token']) . '</strong></a></td>';
-            echo '<td>' . esc_html($r['variante']) . '</td>';
+            echo '<td>' . esc_html(self::VARIANTE_LABEL[$r['variante']] ?? (string) $r['variante']) . '</td>';
             echo '<td>' . esc_html($r['denominazione'] ?: '—') . '</td>';
             echo '<td>' . self::statoTag((string) $r['stato']) . '</td>';
             echo '<td>' . esc_html(self::formatData((string) $r['created_at'])) . '</td>';
+            echo '<td>' . self::archiviaLink((string) $r['token'], !empty($r['archiviata'])) . '</td>';
             echo '</tr>';
         }
 
@@ -146,7 +193,10 @@ final class Panel
         if ($pages > 1) {
             echo '<div class="tablenav"><div class="tablenav-pages">';
             echo '<span class="displaying-num">' . esc_html(sprintf(_n('%d elemento', '%d elementi', $total, 'formedil'), $total)) . '</span> ';
-            $base = add_query_arg(['page' => self::SLUG, 'stato' => $stato, 'q' => $q], admin_url('admin.php'));
+            $base = add_query_arg(
+                ['page' => self::SLUG, 'stato' => $stato, 'q' => $q, 'variante' => $variante, 'dal' => $dal, 'al' => $al, 'mostra_archiviate' => $mostraArchiviate ? '1' : ''],
+                admin_url('admin.php')
+            );
             if ($paged > 1) {
                 echo '<a class="button" href="' . esc_url(add_query_arg('paged', $paged - 1, $base)) . '">‹ ' . esc_html__('Precedente', 'formedil') . '</a> ';
             }
@@ -158,6 +208,22 @@ final class Panel
         }
 
         echo '</div>';
+    }
+
+    /** URL (con nonce) per archiviare/ripristinare una pratica via admin-post. */
+    private static function archiviaUrl(string $token, bool $nuovoValore): string
+    {
+        return wp_nonce_url(
+            admin_url('admin-post.php?action=formedil_archivia&token=' . rawurlencode($token) . '&archivia=' . ($nuovoValore ? '1' : '0')),
+            'formedil_archivia_' . $token
+        );
+    }
+
+    /** Link "Archivia"/"Ripristina" per una riga della lista. */
+    private static function archiviaLink(string $token, bool $archiviata): string
+    {
+        $label = $archiviata ? __('Ripristina', 'formedil') : __('Archivia', 'formedil');
+        return '<a href="' . esc_url(self::archiviaUrl($token, !$archiviata)) . '">' . esc_html($label) . '</a>';
     }
 
     // ------------------------------------------------------------- DETTAGLIO
@@ -196,6 +262,21 @@ final class Panel
                 . esc_html__('Invio del riscontro non riuscito: lo stato non è stato modificato, puoi riprovare. Se il problema persiste controlla le impostazioni in WP Mail SMTP.', 'formedil')
                 . '</p></div>';
         }
+        if (isset($_GET['archiviata'])) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Archiviazione aggiornata.', 'formedil') . '</p></div>';
+        }
+
+        // Archiviazione: azione indipendente dallo stato, serve solo a
+        // togliere la pratica dalla vista principale del pannello.
+        $archiviata = !empty($row['archiviata']);
+        echo '<p>';
+        if ($archiviata) {
+            echo '<span class="description">' . esc_html__('Questa pratica è archiviata.', 'formedil') . '</span> ';
+        }
+        echo '<a class="button" href="' . esc_url(self::archiviaUrl($token, !$archiviata)) . '">'
+            . esc_html($archiviata ? __('Ripristina dall\'archivio', 'formedil') : __('Archivia', 'formedil'))
+            . '</a>';
+        echo '</p>';
 
         // Anagrafica.
         echo '<h2>' . esc_html__('Anagrafica', 'formedil') . '</h2>';
@@ -357,7 +438,7 @@ final class Panel
 
         echo '</tbody></table>';
 
-        submit_button(__('Prepara il riscontro', 'formedil'), 'primary', 'submit', false);
+        submit_button(__('Anteprima', 'formedil'), 'primary', 'submit', false);
         echo '</form>';
 
         self::scriptPrefillDiniego();
@@ -585,6 +666,33 @@ final class Panel
             self::statoLabel($precedente) . ' → ' . self::statoLabel($nuovo)
         );
         wp_safe_redirect(add_query_arg('updated', '1', $detail));
+        exit;
+    }
+
+    /**
+     * Archivia o ripristina una pratica. Azione indipendente dal ciclo di
+     * vita (stato): non registriamo un evento di audit per non confondere
+     * la cronologia della pratica con questa operazione puramente
+     * organizzativa lato pannello.
+     */
+    public function handleArchivia(): void
+    {
+        if (!current_user_can(self::CAP)) {
+            wp_die(esc_html__('Permesso negato.', 'formedil'));
+        }
+
+        $token = isset($_GET['token']) ? Token::normalize(sanitize_text_field(wp_unslash($_GET['token']))) : '';
+        check_admin_referer('formedil_archivia_' . $token);
+
+        $archivia = isset($_GET['archivia']) ? (bool) (int) $_GET['archivia'] : true;
+
+        $redirect = self::detailUrl($token);
+        if (Repository::findByToken($token) === null) {
+            wp_die(esc_html__('Richiesta non trovata.', 'formedil'));
+        }
+
+        Repository::updateArchiviata($token, $archivia);
+        wp_safe_redirect(add_query_arg('archiviata', '1', $redirect));
         exit;
     }
 

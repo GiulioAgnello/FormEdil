@@ -50,7 +50,7 @@ export function useWizard(schema, variante) {
   const validateCurrent = useCallback(() => {
     const stepErrors = {};
     for (const field of currentFields) {
-      const err = validateField(field, dati[field.name]);
+      const err = validateField(field, dati[field.name], dati);
       if (err) stepErrors[field.name] = err;
     }
     setErrors(stepErrors);

@@ -85,6 +85,7 @@ final class RichiestaService
             'token'        => $row['token'] ?? '',
             'variante'     => $row['variante'] ?? '',
             'stato'        => $row['stato'] ?? '',
+            'archiviata'   => !empty($row['archiviata']),
             'denominazione'=> $denominazione,
             'tipi_corso'   => $tipiCorso,
             'durata_dal'   => $dati['durata_dal'] ?? '',

@@ -6,6 +6,7 @@ namespace Formedil\Moduli\Core;
 
 use Formedil\Moduli\Admin\Panel;
 use Formedil\Moduli\Admin\SettingsPage;
+use Formedil\Moduli\Data\Repository;
 use Formedil\Moduli\Rest\RestController;
 
 /**
@@ -18,6 +19,11 @@ final class Plugin
 {
     public function register(): void
     {
+        // Allinea lo schema del DB se necessario (es. dopo un deploy che
+        // aggiunge colonne): così le installazioni già attive si aggiornano
+        // da sole, senza dover disattivare/riattivare il plugin.
+        Repository::ensureSchema();
+
         // API REST pubbliche (creazione richiesta, invio documenti).
         $rest = new RestController();
         add_action('rest_api_init', [$rest, 'registerRoutes']);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { api } from '@/api/client';
 import './Esito.css';
 
@@ -9,7 +9,6 @@ import './Esito.css';
  */
 export default function Esito() {
   const { token } = useParams();
-  const navigate = useNavigate();
   const [riepilogo, setRiepilogo] = useState(null);
   const [error, setError] = useState('');
 
@@ -53,9 +52,14 @@ export default function Esito() {
         <a className="btn btn--primary" href={api.pdfUrl(token)} target="_blank" rel="noreferrer">
           ↓ Scarica il PDF
         </a>
-        <button className="btn btn--ghost" onClick={() => navigate(`/invio/${token}`)}>
+        <a
+          className="btn btn--ghost"
+          href={`/invio/${token}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Vai a "Invia documentazione" →
-        </button>
+        </a>
       </div>
 
       <p className="esito__home">

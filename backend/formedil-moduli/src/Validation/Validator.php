@@ -113,7 +113,46 @@ final class Validator
 
             default:
                 $this->validateScalar($field, $value, $required);
+                $this->validateDateOrder($field, $value, $dati);
                 break;
+        }
+    }
+
+    /**
+     * Verifica che una data non sia precedente a un'altra dello stesso record,
+     * dichiarata nello schema tramite "validateAfter": "<nome_campo>" (es.
+     * durata_al non può precedere durata_dal). Generico e riusabile per
+     * qualsiasi futura coppia di campi data. Se una delle due date manca o non
+     * è parsabile non fa nulla: se ne occupano gli altri controlli.
+     *
+     * @param array<string,mixed> $field
+     * @param mixed $value
+     * @param array<string,mixed> $dati
+     */
+    private function validateDateOrder(array $field, $value, array $dati): void
+    {
+        $afterField = $field['validateAfter'] ?? null;
+        if (!is_string($afterField) || $afterField === '') {
+            return;
+        }
+
+        $name = (string) ($field['name'] ?? '');
+        $str = is_string($value) ? trim($value) : (is_scalar($value) ? (string) $value : '');
+        $otherRaw = $dati[$afterField] ?? null;
+        $otherStr = is_string($otherRaw) ? trim($otherRaw) : (is_scalar($otherRaw) ? (string) $otherRaw : '');
+
+        if ($str === '' || $otherStr === '') {
+            return;
+        }
+
+        $valueTs = strtotime($str);
+        $otherTs = strtotime($otherStr);
+        if ($valueTs === false || $otherTs === false) {
+            return;
+        }
+
+        if ($valueTs < $otherTs && !isset($this->errors[$name])) {
+            $this->errors[$name] = 'La data non può essere precedente alla data di inizio indicata.';
         }
     }
 

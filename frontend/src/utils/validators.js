@@ -70,11 +70,26 @@ const isEmpty = (v) =>
   v === null || v === undefined || (typeof v === 'string' && v.trim() === '');
 
 /**
+ * Confronta due date (stringhe ISO yyyy-mm-dd) e dice se la seconda precede la prima.
+ * Ritorna null se una delle due manca o non è una data valida (se ne occupano
+ * altri controlli: qui vogliamo solo l'ordine cronologico).
+ */
+function isBefore(value, reference) {
+  if (isEmpty(value) || isEmpty(reference)) return false;
+  const a = new Date(reference);
+  const b = new Date(value);
+  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return false;
+  return b < a;
+}
+
+/**
  * Valida un singolo campo. Restituisce messaggio d'errore o null.
  * @param {object} field definizione dello schema
  * @param {*} value valore corrente
+ * @param {object} [allData] dati completi del record, servono ai controlli
+ *   che confrontano più campi tra loro (es. "validateAfter" sulle date).
  */
-export function validateField(field, value) {
+export function validateField(field, value, allData) {
   const type = field.type || 'text';
 
   switch (type) {
@@ -119,7 +134,12 @@ export function validateField(field, value) {
 
     default: {
       if (isEmpty(value)) return field.required ? 'Campo obbligatorio.' : null;
-      return checkFormat(field.validation, value);
+      const formatErr = checkFormat(field.validation, value);
+      if (formatErr) return formatErr;
+      if (field.validateAfter && allData && isBefore(value, allData[field.validateAfter])) {
+        return 'La data non può essere precedente alla data di inizio indicata.';
+      }
+      return null;
     }
   }
 }
