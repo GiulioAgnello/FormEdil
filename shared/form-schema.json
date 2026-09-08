@@ -125,6 +125,16 @@
         "value": "non_autorizzo",
         "label": "NON Autorizzo FORMEDIL LECCE al trattamento dei dati"
       }
+    ],
+    "esercente": [
+      {
+        "value": "Impresa edile",
+        "label": "Impresa edile"
+      },
+      {
+        "value": "Altro",
+        "label": "Altro"
+      }
     ]
   },
   "steps": [
@@ -312,8 +322,9 @@
             {
               "name": "azienda_esercente",
               "label": "Esercente l'attività di",
-              "type": "text",
+              "type": "select",
               "required": true,
+              "optionsRef": "esercente",
               "col": 6
             },
             {
@@ -468,11 +479,12 @@
         {
           "name": "azienda_esercente",
           "label": "Esercente l'attività di",
-          "type": "text",
+          "type": "select",
           "required": true,
           "variants": [
             "IMPRESA"
           ],
+          "optionsRef": "esercente",
           "col": 6
         },
         {
